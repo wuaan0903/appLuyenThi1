@@ -4,6 +4,9 @@
  */
 package exam.view;
 
+import exam.model.Question;
+import java.util.List;
+
 /**
  *
  * @author admin
@@ -13,10 +16,20 @@ public class ResultForm extends javax.swing.JFrame {
     /**
      * Creates new form ResultForm
      */
+    List<Question> dataList;
+    public ResultForm(int a,List<Question> q)
+    {
+        
+        //
+        
+        initComponents();
+        
+        dataList = q;
+        numCorrect.setText(a+ "/"+dataList.size());
+    }
     public ResultForm() {
         initComponents();
-        viewTest v =new viewTest();
-        numCorrect.setText(v.getScore()+ "/"+v.getnumberExam());
+        
     }
 
     /**
@@ -88,6 +101,11 @@ public class ResultForm extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Xem đáp án");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(0, 153, 153));
         jButton2.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
@@ -224,6 +242,15 @@ public class ResultForm extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        // TODO add your handling code here:
+        viewTest vTest = new viewTest(dataList);
+        vTest.setVisible(true);
+        this.dispose();
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
