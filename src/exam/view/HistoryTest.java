@@ -4,41 +4,37 @@
  */
 package exam.view;
 
-import com.mysql.cj.protocol.x.Notice;
 import exam.controller.ExamModify;
 import exam.model.Question;
-import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.Image;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 
 /**
  *
  * @author admin
  */
-public class viewTest extends javax.swing.JFrame {
+public class HistoryTest extends javax.swing.JFrame {
 
     /**
-     * Creates new form viewTest
+     * Creates new form HistoryTest
      */
     List<Question> dataList;
     Question q;
     int pos = 0;
-    
-    public viewTest() {
+    public HistoryTest() {
         initComponents();
         dataList = ExamModify.getQuestion("1");
         View();
         ViewList();
     }
-    public viewTest(List<Question> q)
+    public HistoryTest(List<Question> q)
     {
         initComponents();
         dataList = q;
-        View1();
+        View();
         ViewList();
-        this.submitBtn.setVisible(false);
-        this.ExitBtn.setVisible(false);
 
     }
     
@@ -52,33 +48,58 @@ public class viewTest extends javax.swing.JFrame {
         this.answerD.setText("D." + q.getAnswerD());
         
 
-        switch (q.getStatus()) {
+        this.iconCheckA.setVisible(false);
+        this.iconCheckB.setVisible(false);
+        this.iconCheckC.setVisible(false);
+        this.iconCheckD.setVisible(false);
+        
+        ImageIcon iconCheck = new ImageIcon("E:\\CODE\\AppLuyenThi\\src\\image\\check-circle-solid-24.png");
+        switch (q.getAnswer()) {
             case 1:
-                OnOff(true, false, false, false);
+                CheckCorrect(true, false, false, false);
+                this.iconCheckA.setIcon(iconCheck);
                 break;
             case 2:
-                OnOff(false, true, false, false);
+                CheckCorrect(false, true, false, false);
+                this.iconCheckB.setIcon(iconCheck);
                 break;
             case 3:
-                OnOff(false, false, true, false);
+                CheckCorrect(false, false, true, false);
+                this.iconCheckC.setIcon(iconCheck);
+
                 break;
             case 4:
-                OnOff(false, false, false, true);
-                break;
-            default:
-                this.buttonGroup1.clearSelection();
+                CheckCorrect(false, false, false, true);
+                this.iconCheckD.setIcon(iconCheck);
                 break;
         }
-    }
-    public void View1() {
-        
-        q = dataList.get(pos);
-        this.question.setText("Câu số " + (pos + 1) + " : " + q.getQuestion());
-        this.answerA.setText("A." + q.getAnswerA());
-        this.answerB.setText("B." + q.getAnswerB());
-        this.answerC.setText("C." + q.getAnswerC());
-        this.answerD.setText("D." + q.getAnswerD());
-        
+        if(q.getAnswer()!=q.getStatus())
+        {
+            
+            ImageIcon iconX = new ImageIcon("E:\\CODE\\AppLuyenThi\\src\\image\\x-circle-regular-24.png");
+            switch (q.getStatus()) {
+            case 1:
+                this.iconCheckA.setVisible(true);
+                
+                this.iconCheckA.setIcon(iconX);
+                break;
+            case 2:
+                this.iconCheckB.setVisible(true);
+                
+                this.iconCheckB.setIcon(iconX);
+                break;
+            case 3:
+                this.iconCheckC.setVisible(true);
+                
+                this.iconCheckC.setIcon(iconX);
+                break;
+            case 4:
+                this.iconCheckD.setVisible(true);
+                
+                this.iconCheckD.setIcon(iconX);
+                break;
+        }
+        }
         
 
         switch (q.getStatus()) {
@@ -99,6 +120,7 @@ public class viewTest extends javax.swing.JFrame {
                 break;
         }
     }
+    
 
     public void ViewList() {
         DefaultListModel model = new DefaultListModel();
@@ -110,7 +132,7 @@ public class viewTest extends javax.swing.JFrame {
         
     }
     }
-
+    
     public int Choice() {
         int n = 0;
         if (this.answerA.isSelected()) {
@@ -127,23 +149,28 @@ public class viewTest extends javax.swing.JFrame {
         }
         return n;
     }
-    int getScore(){
-        int d=0;
-        for(Question x:dataList)
-        {
-            if(x.getAnswer()==x.getStatus())
-            {
-                d++;
-            }
-        }
-        return d;
-    }
-
+    
     public void OnOff(boolean a, boolean b, boolean c, boolean d) {
         this.answerA.setSelected(a);
         this.answerB.setSelected(b);
         this.answerC.setSelected(c);
         this.answerD.setSelected(d);
+    }
+    public void CheckCorrect(boolean a,boolean b,boolean c,boolean d)
+    {
+        this.iconCheckA.setVisible(a);
+        this.iconCheckB.setVisible(b);
+        this.iconCheckC.setVisible(c);
+        this.iconCheckD.setVisible(d);
+        
+    }
+    public void CheckFalse(boolean a,boolean b,boolean c,boolean d)
+    {
+        this.iconCheckA.setVisible(a);
+        this.iconCheckB.setVisible(b);
+        this.iconCheckC.setVisible(c);
+        this.iconCheckD.setVisible(d);
+        
     }
     public void goToNextQuestion() {
         if (pos < dataList.size()-1) { // Kiểm tra xem còn câu hỏi tiếp theo không
@@ -156,7 +183,6 @@ public class viewTest extends javax.swing.JFrame {
         }
         // Có thể thêm thông báo nếu không còn câu hỏi tiếp theo
     }
-   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -179,8 +205,10 @@ public class viewTest extends javax.swing.JFrame {
         answerB = new javax.swing.JRadioButton();
         answerD = new javax.swing.JRadioButton();
         answerC = new javax.swing.JRadioButton();
-        submitBtn = new javax.swing.JButton();
-        ExitBtn = new javax.swing.JButton();
+        iconCheckC = new javax.swing.JLabel();
+        iconCheckA = new javax.swing.JLabel();
+        iconCheckB = new javax.swing.JLabel();
+        iconCheckD = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         listQ = new javax.swing.JList<>();
 
@@ -279,12 +307,30 @@ public class viewTest extends javax.swing.JFrame {
         answerC.setForeground(new java.awt.Color(255, 255, 255));
         answerC.setText("C. 3");
 
+        iconCheckC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/check-circle-solid-24.png"))); // NOI18N
+        iconCheckC.setText("jLabel1");
+
+        iconCheckA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/check-circle-solid-24.png"))); // NOI18N
+        iconCheckA.setText("jLabel1");
+
+        iconCheckB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/check-circle-solid-24.png"))); // NOI18N
+        iconCheckB.setText("jLabel1");
+
+        iconCheckD.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/check-circle-solid-24.png"))); // NOI18N
+        iconCheckD.setText("jLabel1");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(70, 70, 70)
+                .addGap(33, 33, 33)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(iconCheckC, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(iconCheckA, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(iconCheckB, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(iconCheckD, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(answerA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(answerB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -295,36 +341,24 @@ public class viewTest extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(answerA)
+                .addGap(59, 59, 59)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(answerA)
+                    .addComponent(iconCheckA))
                 .addGap(18, 18, 18)
-                .addComponent(answerB)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(answerB)
+                    .addComponent(iconCheckB))
                 .addGap(18, 18, 18)
-                .addComponent(answerC)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(answerC)
+                    .addComponent(iconCheckC))
                 .addGap(18, 18, 18)
-                .addComponent(answerD)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(answerD)
+                    .addComponent(iconCheckD))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
-
-        submitBtn.setBackground(new java.awt.Color(0, 153, 153));
-        submitBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
-        submitBtn.setForeground(new java.awt.Color(255, 255, 255));
-        submitBtn.setText("Nộp bài");
-        submitBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitBtnActionPerformed(evt);
-            }
-        });
-
-        ExitBtn.setBackground(new java.awt.Color(0, 153, 153));
-        ExitBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
-        ExitBtn.setForeground(new java.awt.Color(255, 255, 255));
-        ExitBtn.setText("Thoát");
-        ExitBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExitBtnActionPerformed(evt);
-            }
-        });
 
         listQ.setBackground(new java.awt.Color(204, 255, 255));
         listQ.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
@@ -351,10 +385,6 @@ public class viewTest extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(submitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ExitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -369,11 +399,6 @@ public class viewTest extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(submitBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ExitBtn)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
@@ -382,44 +407,15 @@ public class viewTest extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void answerDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_answerDActionPerformed
-
-    private void ExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitBtnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ExitBtnActionPerformed
-
-    private void listQValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listQValueChanged
-        // TODO add your handling code here:
-        int n = Choice();
-        q.setStatus(n);
-        dataList.set(pos, q);
-        pos = this.listQ.getSelectedIndex();
-        View();
-    }//GEN-LAST:event_listQValueChanged
-
-    private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
-        // TODO add your handling code here:
-
-        ResultForm rf= new ResultForm(this.getScore(),dataList);
-        rf.setVisible(true);
-        this.dispose();
-        
-                
-        
-    }//GEN-LAST:event_submitBtnActionPerformed
 
     private void BackBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackBtnActionPerformed
         // TODO add your handling code here:
@@ -429,7 +425,7 @@ public class viewTest extends javax.swing.JFrame {
 
             pos--; // Tăng chỉ số câu hỏi để chuyển đến câu hỏi tiếp theo
             View(); // Hiển thị câu hỏi tiếp theo
-//            ViewResult(); // Cập nhật kết quả
+            //            ViewResult(); // Cập nhật kết quả
         }
         // Có thể thêm thông báo nếu không còn câu hỏi tiếp theo
     }//GEN-LAST:event_BackBtnActionPerformed
@@ -438,6 +434,19 @@ public class viewTest extends javax.swing.JFrame {
         // TODO add your handling code here:
         goToNextQuestion();
     }//GEN-LAST:event_NextBtnActionPerformed
+
+    private void answerDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_answerDActionPerformed
+
+    private void listQValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listQValueChanged
+        // TODO add your handling code here:
+        int n = Choice();
+        q.setStatus(n);
+        dataList.set(pos, q);
+        pos = this.listQ.getSelectedIndex();
+        View();
+    }//GEN-LAST:event_listQValueChanged
 
     /**
      * @param args the command line arguments
@@ -456,40 +465,42 @@ public class viewTest extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(viewTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(viewTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(viewTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(viewTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new viewTest().setVisible(true);
+                new HistoryTest().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BackBtn;
-    private javax.swing.JButton ExitBtn;
     private javax.swing.JButton NextBtn;
     private javax.swing.JRadioButton answerA;
     private javax.swing.JRadioButton answerB;
     private javax.swing.JRadioButton answerC;
     private javax.swing.JRadioButton answerD;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel iconCheckA;
+    private javax.swing.JLabel iconCheckB;
+    private javax.swing.JLabel iconCheckC;
+    private javax.swing.JLabel iconCheckD;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<String> listQ;
     private javax.swing.JLabel question;
-    private javax.swing.JButton submitBtn;
     private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 }

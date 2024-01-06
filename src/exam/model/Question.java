@@ -10,8 +10,8 @@ package exam.model;
  */
 public class Question {
     private int id;
-    private String question;
     private String NameExam;
+    private String question;
     private String AnswerA;
     private String AnswerB;
     private String AnswerC;

@@ -246,8 +246,8 @@ public class ResultForm extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
         // TODO add your handling code here:
-        viewTest vTest = new viewTest(dataList);
-        vTest.setVisible(true);
+        HistoryTest ht = new HistoryTest(dataList);
+        ht.setVisible(true);
         this.dispose();
         
     }//GEN-LAST:event_jButton1ActionPerformed
