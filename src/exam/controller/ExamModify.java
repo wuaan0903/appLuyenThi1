@@ -42,13 +42,14 @@ public class ExamModify {
             ResultSet resultSet = statement.executeQuery();
             
             while(resultSet.next()) {
-                exam exam = new exam(
+                exam ex = new exam(
                         resultSet.getInt("id"),
                         resultSet.getString("NameExam"),
+                        resultSet.getInt("numberExam"),
                         resultSet.getInt("soCauHoi"),
                         resultSet.getInt("thoigian")
                 );
-                dataList.add(exam);
+                dataList.add(ex);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ExamModify.class.getName()).log(Level.SEVERE, null, ex);
@@ -127,19 +128,20 @@ public class ExamModify {
         return dataList;
     }
     
-    public static void insert(exam exam) {
+    public static void insertExam(exam exam) {
         Connection conn = null;
         PreparedStatement statement = null;
         
         try {
             conn = DriverManager.getConnection(Config.DB_URL, Config.USERNAME, Config.PASSWORD);
             
-            String sql = "insert into list_exam(NameExam, soCauHoi, thoigian) "
-                    + "values (?, ?, ?)";
+            String sql = "insert into list_exam(NameExam,numberExam, soCauHoi, thoigian) "
+                    + "values (?,?, ?, ?)";
             statement = conn.prepareStatement(sql);
             statement.setString(1, exam.getNameExam());
-            statement.setInt(2, exam.getSoCauHoi());
-            statement.setInt(3, exam.getThoigian());
+            statement.setInt(2, exam.getNumberExam());
+            statement.setInt(3, exam.getSoCauHoi());
+            statement.setInt(4, exam.getThoigian());
             
             statement.execute();
         } catch (SQLException ex) {

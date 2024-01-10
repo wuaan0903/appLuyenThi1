@@ -11,24 +11,29 @@ package exam.model;
 public class exam {
     private int id;
     private String nameExam;
+    private int numberExam;
     private int soCauHoi;
     private int thoigian;
 
     public exam() {
     }
 
-    public exam(int id, String nameExam, int soCauHoi, int thoigian) {
+    public exam(int id, String nameExam, int numberExam, int soCauHoi, int thoigian) {
         this.id = id;
         this.nameExam = nameExam;
+        this.numberExam = numberExam;
         this.soCauHoi = soCauHoi;
         this.thoigian = thoigian;
     }
+    
 
-    public exam(String nameExam, int soCauHoi, int thoigian) {
+    public exam(String nameExam, int numberExam, int soCauHoi, int thoigian) {
         this.nameExam = nameExam;
+        this.numberExam = numberExam;
         this.soCauHoi = soCauHoi;
         this.thoigian = thoigian;
     }
+    
     
 
     public int getId() {
@@ -63,10 +68,20 @@ public class exam {
         this.thoigian = thoigian;
     }
 
+    public int getNumberExam() {
+        return numberExam;
+    }
+
+    public void setNumberExam(int numberExam) {
+        this.numberExam = numberExam;
+    }
+   
+
     @Override
     public String toString() {
-        return "exam{" + "id=" + id + ", nameExam=" + nameExam + ", soCauHoi=" + soCauHoi + ", thoigian=" + thoigian + '}';
+        return "exam{" + "id=" + id + ", nameExam=" + nameExam + ", numberExam=" + numberExam + ", soCauHoi=" + soCauHoi + ", thoigian=" + thoigian + '}';
     }
+    
     
     
 }

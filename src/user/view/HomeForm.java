@@ -383,27 +383,44 @@ public class HomeForm extends javax.swing.JFrame {
 
     private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
         // TODO add your handling code here:
-        System.out.println("hihiihi");
+        listExam lExam= new listExam("Lập trình hướng đối tượng");
+        lExam.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jPanel2MouseClicked
 
     private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
         // TODO add your handling code here:
+        listExam lExam= new listExam("Cơ sở dữ liệu");
+        lExam.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jPanel4MouseClicked
 
     private void jPanel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel5MouseClicked
         // TODO add your handling code here:
+        listExam lExam= new listExam("Công nghệ Java");
+        lExam.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jPanel5MouseClicked
 
     private void jPanel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseClicked
         // TODO add your handling code here:
+        listExam lExam= new listExam("Mạng máy tính");
+        lExam.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jPanel6MouseClicked
 
     private void jPanel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel10MouseClicked
         // TODO add your handling code here:
+        listExam lExam= new listExam("Toán rời rạc");
+        lExam.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jPanel10MouseClicked
 
     private void jPanel11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel11MouseClicked
         // TODO add your handling code here:
+        listExam lExam= new listExam("Tin học đại cương");
+        lExam.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jPanel11MouseClicked
 
     /**
