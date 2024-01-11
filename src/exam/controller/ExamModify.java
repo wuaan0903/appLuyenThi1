@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @author admin
  */
 public class ExamModify {
-    public static List<exam> getExamList(String s) {
+    public static List<exam> getExamList(String s,int a) {
         List<exam> dataList = new ArrayList<>();
         
         Connection conn = null;
@@ -35,9 +35,18 @@ public class ExamModify {
             if(s != null && !s.isEmpty()) {
                 sql += " where NameExam like ?";
             }
+            if(a!=0)
+            {
+                sql += "and numberExam = ? ";
+            }
             statement = conn.prepareStatement(sql);
             if(s != null && !s.isEmpty()) {
                 statement.setString(1, s);
+                
+            }
+            if(a!=0)
+            {
+                statement.setInt(2, a);
             }
             ResultSet resultSet = statement.executeQuery();
             
@@ -73,7 +82,7 @@ public class ExamModify {
         return dataList;
     }
     
-    public static List<Question> getQuestion(String s) {
+    public static List<Question> getQuestion(String s,int a) {
         List<Question> dataList = new ArrayList<>();
         
         Connection conn = null;
@@ -86,9 +95,17 @@ public class ExamModify {
             if(s != null && !s.isEmpty()) {
                 sql += " where NameExam like ?";
             }
+            if(a!=0)
+            {
+                sql += " and numberExam = ?";
+            }
             statement = conn.prepareStatement(sql);
             if(s != null && !s.isEmpty()) {
                 statement.setString(1, s);
+            }
+            if(a!=0)
+            {
+                statement.setInt(2,a);
             }
             ResultSet resultSet = statement.executeQuery();
             
@@ -96,6 +113,7 @@ public class ExamModify {
                 Question q = new Question(
                         resultSet.getInt("id"),
                         resultSet.getString("NameExam"),
+                        resultSet.getInt("numberExam"),
                         resultSet.getString("question"),
                         resultSet.getString("answerA"),
                         resultSet.getString("answerB"),

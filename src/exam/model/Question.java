@@ -11,6 +11,7 @@ package exam.model;
 public class Question {
     private int id;
     private String NameExam;
+    private int numberExam;
     private String question;
     private String AnswerA;
     private String AnswerB;
@@ -19,9 +20,12 @@ public class Question {
     private int answer;
     private int status;
 
-    public Question(int id,String NameExam, String question, String AnswerA, String AnswerB, String AnswerC, String AnswerD, int answer, int status) {
+
+
+    public Question(int id, String NameExam, int numberExam, String question, String AnswerA, String AnswerB, String AnswerC, String AnswerD, int answer, int status) {
         this.id = id;
         this.NameExam = NameExam;
+        this.numberExam = numberExam;
         this.question = question;
         this.AnswerA = AnswerA;
         this.AnswerB = AnswerB;
@@ -30,6 +34,7 @@ public class Question {
         this.answer = answer;
         this.status = status;
     }
+    
 
     public int getId() {
         return id;
@@ -53,6 +58,14 @@ public class Question {
 
     public void setNameExam(String NameExam) {
         this.NameExam = NameExam;
+    }
+
+    public int getNumberExam() {
+        return numberExam;
+    }
+
+    public void setNumberExam(int numberExam) {
+        this.numberExam = numberExam;
     }
     
 

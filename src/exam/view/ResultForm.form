@@ -112,7 +112,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel2" max="32767" attributes="0"/>
+                  <Component id="time" max="32767" attributes="0"/>
                   <Component id="jLabel3" alignment="0" pref="211" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
@@ -121,13 +121,13 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jLabel3" min="-2" pref="34" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel2" min="-2" pref="54" max="-2" attributes="0"/>
+                      <Component id="time" min="-2" pref="54" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="time">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="cc" green="cc" red="0" type="rgb"/>
@@ -294,7 +294,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
+                  <Component id="total" alignment="0" max="32767" attributes="0"/>
                   <Component id="jLabel7" alignment="0" pref="211" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
@@ -303,13 +303,13 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jLabel7" min="-2" pref="34" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel6" min="-2" pref="54" max="-2" attributes="0"/>
+                      <Component id="total" min="-2" pref="54" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel6">
+            <Component class="javax.swing.JLabel" name="total">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="cc" green="cc" red="0" type="rgb"/>

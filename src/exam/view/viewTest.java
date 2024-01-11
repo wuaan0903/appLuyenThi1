@@ -7,10 +7,13 @@ package exam.view;
 import com.mysql.cj.protocol.x.Notice;
 import exam.controller.ExamModify;
 import exam.model.Question;
+import exam.model.exam;
 import java.awt.Color;
+import java.awt.image.TileObserver;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.Timer;
 
 /**
  *
@@ -22,24 +25,61 @@ public class viewTest extends javax.swing.JFrame {
      * Creates new form viewTest
      */
     List<Question> dataList;
+    List<exam> ex;
     Question q;
     int pos = 0;
-    
-    public viewTest() {
-        initComponents();
-        dataList = ExamModify.getQuestion("1");
-        View();
-        ViewList();
-    }
-    public viewTest(List<Question> q)
+    private int totalTimeInSeconds;
+    private int initialTimeInSeconds;// Thời gian tổng cộng cho bài kiểm tra tính bằng giây (300 giây = 5 phút)
+    private Timer countdownTimer;
+    public  viewTest()
     {
         initComponents();
-        dataList = q;
-        View1();
+    }
+    
+    public viewTest(exam e) {
+        initComponents();
+        dataList = ExamModify.getQuestion(e.getNameExam(),e.getNumberExam());
+        View();
         ViewList();
-        this.submitBtn.setVisible(false);
-        this.ExitBtn.setVisible(false);
+        nameExam.setText("Môn học : " + e.getNameExam());
+        numberExam.setText("ĐỀ THI SỐ " + e.getNumberExam());
+        totalTimeInSeconds = e.getThoigian()*60;
+        startCountdown();
+    }
 
+    
+    private void startCountdown() {
+        initialTimeInSeconds = totalTimeInSeconds;
+        countdownTimer = new Timer(1000, e -> {
+            if (totalTimeInSeconds > 0) {
+                int minutes = totalTimeInSeconds / 60;
+                int seconds = totalTimeInSeconds % 60;
+
+                String timeString = String.format("%02d:%02d", minutes, seconds);
+                time.setText(timeString);
+
+                totalTimeInSeconds--; // Giảm thời gian tổng cộng
+            } else {
+                // Hết giờ
+                time.setText("Hết giờ!");
+                countdownTimer.stop();
+                ResultForm rf = new ResultForm(this.getScore(), this.getTime(), dataList);
+                rf.setVisible(true);
+                this.dispose();
+                // Dừng đồng hồ đếm ngược khi hết giờ
+                // Tuỳ chọn: thực hiện các hành động cần thiết khi hết giờ
+            }
+        });
+        countdownTimer.start(); // Bắt đầu đồng hồ đếm ngược
+    }
+    
+    int getTime() {
+
+        int timeSpentInSeconds = initialTimeInSeconds - totalTimeInSeconds;
+        ResultForm rf = new ResultForm(this.getScore(), timeSpentInSeconds, dataList);
+        rf.setVisible(true);
+        this.dispose();
+        return initialTimeInSeconds - totalTimeInSeconds;
     }
     
     public void View() {
@@ -70,35 +110,7 @@ public class viewTest extends javax.swing.JFrame {
                 break;
         }
     }
-    public void View1() {
-        
-        q = dataList.get(pos);
-        this.question.setText("Câu số " + (pos + 1) + " : " + q.getQuestion());
-        this.answerA.setText("A." + q.getAnswerA());
-        this.answerB.setText("B." + q.getAnswerB());
-        this.answerC.setText("C." + q.getAnswerC());
-        this.answerD.setText("D." + q.getAnswerD());
-        
-        
-
-        switch (q.getStatus()) {
-            case 1:
-                OnOff(true, false, false, false);
-                break;
-            case 2:
-                OnOff(false, true, false, false);
-                break;
-            case 3:
-                OnOff(false, false, true, false);
-                break;
-            case 4:
-                OnOff(false, false, false, true);
-                break;
-            default:
-                this.buttonGroup1.clearSelection();
-                break;
-        }
-    }
+    
 
     public void ViewList() {
         DefaultListModel model = new DefaultListModel();
@@ -169,7 +181,7 @@ public class viewTest extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        title = new javax.swing.JLabel();
+        numberExam = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         question = new javax.swing.JLabel();
         BackBtn = new javax.swing.JButton();
@@ -183,15 +195,17 @@ public class viewTest extends javax.swing.JFrame {
         ExitBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listQ = new javax.swing.JList<>();
+        nameExam = new javax.swing.JLabel();
+        time = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        title.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
-        title.setForeground(new java.awt.Color(0, 0, 0));
-        title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        title.setText("ĐỀ THI SỐ 1");
+        numberExam.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
+        numberExam.setForeground(new java.awt.Color(0, 0, 0));
+        numberExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        numberExam.setText("ĐỀ THI SỐ 1");
 
         jPanel2.setBackground(new java.awt.Color(0, 153, 153));
 
@@ -286,7 +300,9 @@ public class viewTest extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(70, 70, 70)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(answerA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(answerA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(128, 128, 128))
                     .addComponent(answerB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(answerC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(answerD, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE))
@@ -303,7 +319,7 @@ public class viewTest extends javax.swing.JFrame {
                 .addComponent(answerC)
                 .addGap(18, 18, 18)
                 .addComponent(answerD)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         submitBtn.setBackground(new java.awt.Color(0, 153, 153));
@@ -342,39 +358,62 @@ public class viewTest extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(listQ);
 
+        nameExam.setFont(new java.awt.Font("Montserrat", 0, 20)); // NOI18N
+        nameExam.setForeground(new java.awt.Color(0, 0, 0));
+        nameExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        nameExam.setText("Môn học : Mạng máy tính");
+
+        time.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        time.setForeground(new java.awt.Color(0, 0, 0));
+        time.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/timer-regular-36.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(numberExam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(submitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ExitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(131, 131, 131)
+                .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 627, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(submitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ExitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 20, Short.MAX_VALUE)
+                        .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(submitBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ExitBtn)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                        .addComponent(ExitBtn))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -413,7 +452,7 @@ public class viewTest extends javax.swing.JFrame {
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
         // TODO add your handling code here:
 
-        ResultForm rf= new ResultForm(this.getScore(),dataList);
+        ResultForm rf= new ResultForm(this.getScore(),this.getTime(),dataList);
         rf.setVisible(true);
         this.dispose();
         
@@ -488,8 +527,10 @@ public class viewTest extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<String> listQ;
+    private javax.swing.JLabel nameExam;
+    private javax.swing.JLabel numberExam;
     private javax.swing.JLabel question;
     private javax.swing.JButton submitBtn;
-    private javax.swing.JLabel title;
+    private javax.swing.JLabel time;
     // End of variables declaration//GEN-END:variables
 }

@@ -6,6 +6,7 @@ package admin.view;
 
 import exam.controller.ExamModify;
 import exam.model.exam;
+import exam.view.addQuestion;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
@@ -27,7 +28,7 @@ public class ExamForm extends javax.swing.JFrame {
     public ExamForm() {
         initComponents();
         tableModel = (DefaultTableModel) examTable.getModel();
-        dataList = ExamModify.getExamList(null);
+        dataList = ExamModify.getExamList(null,0);
 
         showData();
         
@@ -143,7 +144,7 @@ public class ExamForm extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Thời gian :");
 
-        saveBtn.setText("Lưu");
+        saveBtn.setText("Thêm");
         saveBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveBtnActionPerformed(evt);
@@ -291,8 +292,11 @@ public class ExamForm extends javax.swing.JFrame {
         ex = new exam(selectedName, number, soCau, thoiGian);
         
         ExamModify.insertExam(ex);
-        dataList = ExamModify.getExamList(null);
+        dataList = ExamModify.getExamList(null,0);
         showData();
+        addQuestion aq = new addQuestion(selectedName,Integer.parseInt(this.numberExam.getText()));
+        aq.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed

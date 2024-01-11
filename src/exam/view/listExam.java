@@ -2,18 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package user.view;
+package exam.view;
 
 import exam.controller.ExamModify;
 import exam.model.Question;
 import exam.model.exam;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JPanel;
+import user.view.HomeForm;
 
 /**
  *
@@ -43,18 +46,31 @@ public class listExam extends javax.swing.JFrame {
     }
     public listExam(String s) {
         initComponents();
-        NameExam.setText("Danh sách đề thi môn " +s);
-        dataList = ExamModify.getExamList(s);
-        exam ex;
-        ex =dataList.get(0);
-        System.out.println(ex.getNameExam());
+        NameExam.setText("Danh sách đề thi môn " + s);
+        dataList = ExamModify.getExamList(s,0);
+
+
+//        System.out.println(ex.getNameExam());
         jPanel1.setLayout(new FlowLayout());
 
         // Sử dụng vòng lặp để thêm 5 nút vào panel
         for (int i = 0; i < dataList.size(); i++) {
+            exam ex;
             ex = dataList.get(i);
-            JButton button = new JButton("Đề " + ex.getNumberExam());
+            int timeEX = ex.getThoigian();
+            int numberEX = ex.getNumberExam();
+            String nameEX = ex.getNameExam();
+            JButton button = new JButton("Đề " + numberEX);
+            System.out.println((int) ex.getNumberExam());
+
+            System.out.println((int) ex.getThoigian());
             button.setPreferredSize(new Dimension(100, 50));
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    viewTest viewTest = new viewTest(ex);
+                    viewTest.setVisible(true);
+                }
+            });
             jPanel1.add(button);
         }
     }

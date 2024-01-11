@@ -25,7 +25,6 @@ public class HistoryTest extends javax.swing.JFrame {
     int pos = 0;
     public HistoryTest() {
         initComponents();
-        dataList = ExamModify.getQuestion("1");
         View();
         ViewList();
     }
@@ -219,7 +218,6 @@ public class HistoryTest extends javax.swing.JFrame {
         title.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
         title.setForeground(new java.awt.Color(0, 0, 0));
         title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        title.setText("ĐỀ THI SỐ 1");
 
         jPanel2.setBackground(new java.awt.Color(0, 153, 153));
 
