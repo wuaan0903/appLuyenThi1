@@ -25,13 +25,14 @@ public class ExamForm extends javax.swing.JFrame {
     DefaultTableModel tableModel;
     List<exam> dataList;
     int currentPos = -1;
+
     public ExamForm() {
         initComponents();
         tableModel = (DefaultTableModel) examTable.getModel();
-        dataList = ExamModify.getExamList(null,0);
+        dataList = ExamModify.getExamList(null, 0);
 
         showData();
-        
+
         examTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -75,7 +76,6 @@ public class ExamForm extends javax.swing.JFrame {
             });
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -290,18 +290,18 @@ public class ExamForm extends javax.swing.JFrame {
         int thoiGian = Integer.parseInt((String) this.thoiGian.getSelectedItem());
         exam ex;
         ex = new exam(selectedName, number, soCau, thoiGian);
-        
+
         ExamModify.insertExam(ex);
-        dataList = ExamModify.getExamList(null,0);
+        dataList = ExamModify.getExamList(null, 0);
         showData();
-        addQuestion aq = new addQuestion(selectedName,Integer.parseInt(this.numberExam.getText()),soCau);
+        addQuestion aq = new addQuestion(selectedName, Integer.parseInt(this.numberExam.getText()), soCau);
         aq.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         // TODO add your handling code here:
-        HomeForm hf =new HomeForm();
+        HomeForm hf = new HomeForm();
         hf.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_backBtnActionPerformed

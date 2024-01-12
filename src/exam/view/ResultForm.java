@@ -18,16 +18,21 @@ public class ResultForm extends javax.swing.JFrame {
      * Creates new form ResultForm
      */
     List<Question> dataList;
-    public ResultForm(int a,int b,List<Question> q)
+    public ResultForm(int a,int Time,List<Question> q)
     {
         
-        //
+      
         
         initComponents();
         
         dataList = q;
         numCorrect.setText(a+ "/"+dataList.size());
-        time.setText(String.valueOf(b));
+        int minutes = Time / 60;
+        int seconds = Time % 60;
+
+        String timeString = String.format("%02d:%02d", minutes, seconds); // Định dạng chuỗi thời gian
+
+        time.setText(timeString);
         total.setText(String.valueOf(round((double)a/dataList.size()*10)));
     }
     public ResultForm() {

@@ -5,6 +5,8 @@
 package exam.view;
 
 import com.mysql.cj.protocol.x.Notice;
+import com.sun.jdi.connect.spi.Connection;
+
 import exam.controller.ExamModify;
 import exam.model.Question;
 import exam.model.exam;
@@ -14,6 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.Timer;
+
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import user.view.HistoryList;
 
 /**
  *
@@ -31,23 +38,41 @@ public class viewTest extends javax.swing.JFrame {
     private int totalTimeInSeconds;
     private int initialTimeInSeconds;// Thời gian tổng cộng cho bài kiểm tra tính bằng giây (300 giây = 5 phút)
     private Timer countdownTimer;
-    public  viewTest()
-    {
-        initComponents();
+
+    public class DatabaseConnection {
+
+        private static java.sql.Connection connection;
+
+        public static java.sql.Connection getConnection() {
+            if (connection == null) {
+                try {
+                    // Thay đổi thông tin kết nối theo CSDL của bạn
+                    String url = "jdbc:mysql://localhost:3306/tracnghiem";
+                    String username = "root";
+                    String password = "";
+
+                    connection = DriverManager.getConnection(url, username, password);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return connection;
+        }
     }
-    
-    public viewTest(exam e) {
+
+    public viewTest(exam e, String id, String name) {
         initComponents();
-        dataList = ExamModify.getQuestion(e.getNameExam(),e.getNumberExam());
+        idU.setText(id);
+        nameU.setText(name);
+        dataList = ExamModify.getQuestion(e.getNameExam(), e.getNumberExam());
         View();
         ViewList();
-        nameExam.setText("Môn học : " + e.getNameExam());
-        numberExam.setText("ĐỀ THI SỐ " + e.getNumberExam());
-        totalTimeInSeconds = e.getThoigian()*60;
+        nameExam.setText(e.getNameExam());
+        numberExam.setText("" + e.getNumberExam());
+        totalTimeInSeconds = e.getThoigian() * 60;
         startCountdown();
     }
 
-    
     private void startCountdown() {
         initialTimeInSeconds = totalTimeInSeconds;
         countdownTimer = new Timer(1000, e -> {
@@ -72,7 +97,7 @@ public class viewTest extends javax.swing.JFrame {
         });
         countdownTimer.start(); // Bắt đầu đồng hồ đếm ngược
     }
-    
+
     int getTime() {
 
         int timeSpentInSeconds = initialTimeInSeconds - totalTimeInSeconds;
@@ -81,16 +106,15 @@ public class viewTest extends javax.swing.JFrame {
         this.dispose();
         return initialTimeInSeconds - totalTimeInSeconds;
     }
-    
+
     public void View() {
-        
+
         q = dataList.get(pos);
         this.question.setText("Câu số " + (pos + 1) + " : " + q.getQuestion());
         this.answerA.setText("A." + q.getAnswerA());
         this.answerB.setText("B." + q.getAnswerB());
         this.answerC.setText("C." + q.getAnswerC());
         this.answerD.setText("D." + q.getAnswerD());
-        
 
         switch (q.getStatus()) {
             case 1:
@@ -110,7 +134,6 @@ public class viewTest extends javax.swing.JFrame {
                 break;
         }
     }
-    
 
     public void ViewList() {
         DefaultListModel model = new DefaultListModel();
@@ -118,9 +141,8 @@ public class viewTest extends javax.swing.JFrame {
         int n = 1;
         for (Question x : dataList) {
             model.addElement("Câu số : " + n++);
-        
-        
-    }
+
+        }
     }
 
     public int Choice() {
@@ -139,12 +161,11 @@ public class viewTest extends javax.swing.JFrame {
         }
         return n;
     }
-    int getScore(){
-        int d=0;
-        for(Question x:dataList)
-        {
-            if(x.getAnswer()==x.getStatus())
-            {
+
+    int getScore() {
+        int d = 0;
+        for (Question x : dataList) {
+            if (x.getAnswer() == x.getStatus()) {
                 d++;
             }
         }
@@ -157,8 +178,9 @@ public class viewTest extends javax.swing.JFrame {
         this.answerC.setSelected(c);
         this.answerD.setSelected(d);
     }
+
     public void goToNextQuestion() {
-        if (pos < dataList.size()-1) { // Kiểm tra xem còn câu hỏi tiếp theo không
+        if (pos < dataList.size() - 1) { // Kiểm tra xem còn câu hỏi tiếp theo không
             q.setStatus(Choice()); // Lấy trạng thái câu hỏi hiện tại
             dataList.set(pos, q); // Cập nhật câu hỏi hiện tại trong danh sách
 
@@ -168,7 +190,12 @@ public class viewTest extends javax.swing.JFrame {
         }
         // Có thể thêm thông báo nếu không còn câu hỏi tiếp theo
     }
-   
+
+    private String convertSecondsToTime(int seconds) {
+        int minutes = seconds / 60;
+        int remainingSeconds = seconds % 60;
+        return String.format("%02d:%02d", minutes, remainingSeconds);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -197,6 +224,10 @@ public class viewTest extends javax.swing.JFrame {
         listQ = new javax.swing.JList<>();
         nameExam = new javax.swing.JLabel();
         time = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        idU = new javax.swing.JLabel();
+        nameU = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -244,7 +275,7 @@ public class viewTest extends javax.swing.JFrame {
                 .addGap(123, 123, 123))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                    .addContainerGap(560, Short.MAX_VALUE)
+                    .addContainerGap(738, Short.MAX_VALUE)
                     .addComponent(NextBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(16, 16, 16)))
         );
@@ -301,11 +332,11 @@ public class viewTest extends javax.swing.JFrame {
                 .addGap(70, 70, 70)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(answerA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(answerA, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                         .addGap(128, 128, 128))
                     .addComponent(answerB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(answerC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(answerD, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE))
+                    .addComponent(answerD, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(65, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -367,43 +398,91 @@ public class viewTest extends javax.swing.JFrame {
         time.setForeground(new java.awt.Color(0, 0, 0));
         time.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/timer-regular-36.png"))); // NOI18N
 
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+
+        idU.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        idU.setForeground(new java.awt.Color(0, 0, 0));
+        idU.setText("1");
+
+        nameU.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        nameU.setForeground(new java.awt.Color(0, 0, 0));
+        nameU.setText("Phan Van Tươi");
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setText("Mã sinh viên:");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(idU, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nameU, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(19, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(nameU, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(idU, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(numberExam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(submitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(ExitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(82, 82, 82)
+                        .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(135, 135, 135)
+                        .addComponent(time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(348, 348, 348))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(submitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(ExitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(131, 131, 131)
-                .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 627, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(280, 280, 280)
+                .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 20, Short.MAX_VALUE)
-                        .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(time, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)))
                 .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -421,7 +500,7 @@ public class viewTest extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 869, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -450,19 +529,51 @@ public class viewTest extends javax.swing.JFrame {
     }//GEN-LAST:event_listQValueChanged
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
-        // TODO add your handling code here:
 
-        ResultForm rf= new ResultForm(this.getScore(),this.getTime(),dataList);
+        int lastQuestionStatus = Choice();
+        q.setStatus(lastQuestionStatus);
+        dataList.set(pos, q);
+        double score = this.getScore();
+        int timer = this.getTime();
+        String formattedTime = convertSecondsToTime(timer);
+
+        // Lấy thông tin người dùng hoặc các dữ liệu cần thiết từ form
+        String selectedName = (String) this.nameExam.getText(); // Thay thế nameExam bằng thành phần tương ứng trên form của bạn
+        String NameUser = (String) this.nameU.getText();
+        int numberEx = Integer.parseInt(this.numberExam.getText());
+        int userID = Integer.parseInt(this.idU.getText()); // Thay thế idd bằng thành phần tương ứng trên form của bạn
+
+        // Kết nối đến cơ sở dữ liệu
+        try (java.sql.Connection connection = DatabaseConnection.getConnection()) {
+            // Thực hiện truy vấn SQL để chèn dữ liệu vào bảng history_test
+            String sql = "INSERT INTO history_test (user_id,name, nameExam, ID_exam, total, time_completed) VALUES (?, ?, ?, ?, ?, ?)";
+
+            try (java.sql.PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setInt(1, userID);
+                preparedStatement.setString(2, NameUser);
+                preparedStatement.setString(3, selectedName);
+                preparedStatement.setInt(4, numberEx);
+                preparedStatement.setDouble(5, score);
+                preparedStatement.setString(6, formattedTime);
+
+                // Thực hiện lưu dữ liệu vào bảng
+                preparedStatement.executeUpdate();
+            }
+
+            // Hiển thị cửa sổ kết quả
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Xử lý lỗi, có thể hiển thị thông báo lỗi cho người dùng nếu cần
+        }
+        ResultForm rf = new ResultForm(this.getScore(), this.getTime(), dataList);
         rf.setVisible(true);
-        this.dispose();
-        
-                
-        
+
+
     }//GEN-LAST:event_submitBtnActionPerformed
 
     private void BackBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackBtnActionPerformed
         // TODO add your handling code here:
-        if (pos >0) { // Kiểm tra xem còn câu hỏi tiếp theo không
+        if (pos > 0) { // Kiểm tra xem còn câu hỏi tiếp theo không
             q.setStatus(Choice()); // Lấy trạng thái câu hỏi hiện tại
             dataList.set(pos, q); // Cập nhật câu hỏi hiện tại trong danh sách
 
@@ -508,7 +619,7 @@ public class viewTest extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new viewTest().setVisible(true);
+
             }
         });
     }
@@ -522,12 +633,16 @@ public class viewTest extends javax.swing.JFrame {
     private javax.swing.JRadioButton answerC;
     private javax.swing.JRadioButton answerD;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel idU;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<String> listQ;
     private javax.swing.JLabel nameExam;
+    private javax.swing.JLabel nameU;
     private javax.swing.JLabel numberExam;
     private javax.swing.JLabel question;
     private javax.swing.JButton submitBtn;

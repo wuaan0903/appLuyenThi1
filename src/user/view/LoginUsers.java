@@ -16,7 +16,9 @@ import user.controller.DataUserFunction;
  * @author admin
  */
 public class LoginUsers extends javax.swing.JFrame {
+
     List<employee> listE;
+
     /**
      * Creates new form LoginUsers
      */
@@ -172,16 +174,13 @@ public class LoginUsers extends javax.swing.JFrame {
                 HomeForm hf = new HomeForm(checkE);
                 hf.setVisible(true);
                 this.dispose();
-
             } else {
-
                 JOptionPane.showMessageDialog(rootPane, "Thông Tin tài khoản và "
                         + "mật khẩu không chính xác!");
             }
         } else {
             JOptionPane.showMessageDialog(rootPane, "vui lòng không để trống các ô!");
         }
-                                
     }//GEN-LAST:event_loginBtnActionPerformed
 
     /**
@@ -218,7 +217,7 @@ public class LoginUsers extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void readList() {
         DataUserFunction af = new DataUserFunction();
         listE = af.getUserList();
