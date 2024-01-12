@@ -4,6 +4,16 @@
  */
 package exam.view;
 
+import admin.view.ExamForm;
+import exam.controller.ExamModify;
+import exam.model.Question;
+import java.awt.Window;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author admin
@@ -13,15 +23,76 @@ public class addQuestion extends javax.swing.JFrame {
     /**
      * Creates new form addQuestion
      */
+    List<Question> dataList = new ArrayList<>();
+    int pos=0;
+    String nameExam1;
+    int numberExam1;
+    int soCau;
     public addQuestion()
     {
         initComponents();
+        nameExam1 = "TEST";
+        numberExam1=2;
+        soCau = 3;
+        for(int i=0;i<soCau;i++)
+        {
+            
+            Question q = new Question();
+            q.setStatus(0);
+            dataList.add(q);
+        }
+        View();
+        
+        
     }
-    public addQuestion(String s,int a) {
+    public addQuestion(String s,int a,int b) {
         initComponents();
         nameExam.setText("Môn học : " +s);
         numberExam.setText("ĐỀ THI SỐ " +a);
+        nameExam1 = s;
+        numberExam1=a;
+        soCau = b;
+        cauHoi.setText("Câu Hỏi " +(pos+1));
+        for(int i=0;i<b;i++)
+        {
+            Question q = new Question();
+            q.setStatus(0);
+            dataList.add(q);
+        }
+        View();
+        
+
     }
+    
+    public void View(){
+        cauHoi.setText("Câu Hỏi "+(pos+1));
+        if(dataList.get(pos).getStatus()==0)
+        {
+         this.question.setText("");
+         this.answerA.setText("");
+         this.answerB.setText("");
+         this.answerC.setText("");
+         this.answerD.setText("");
+         this.answerCorrect.setText("");
+        }
+        else{
+            this.question.setText(dataList.get(pos).getQuestion());
+            this.answerA.setText(dataList.get(pos).getAnswerA());
+            this.answerB.setText(dataList.get(pos).getAnswerB());
+            this.answerC.setText(dataList.get(pos).getAnswerC());
+            this.answerD.setText(dataList.get(pos).getAnswerD());
+            this.answerCorrect.setText(String.valueOf(dataList.get(pos).getAnswer()));
+        }
+        
+        if(pos ==soCau-1)
+        {
+            saveBtn.setVisible(true);
+        }
+        else{
+              saveBtn.setVisible(false);
+                }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -35,21 +106,21 @@ public class addQuestion extends javax.swing.JFrame {
         nameExam = new javax.swing.JLabel();
         numberExam = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-        jLabel3 = new javax.swing.JLabel();
+        question = new javax.swing.JTextPane();
+        cauHoi = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        answerA = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        answerB = new javax.swing.JTextField();
+        answerD = new javax.swing.JTextField();
+        answerC = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        saveBtn = new javax.swing.JButton();
+        nextBtn = new javax.swing.JButton();
+        backBtn = new javax.swing.JButton();
+        answerCorrect = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,11 +132,11 @@ public class addQuestion extends javax.swing.JFrame {
         numberExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         numberExam.setText("ĐỀ THI SỐ 1");
 
-        jScrollPane1.setViewportView(jTextPane1);
+        jScrollPane1.setViewportView(question);
 
-        jLabel3.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Câu hỏi 1 :");
+        cauHoi.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
+        cauHoi.setForeground(new java.awt.Color(0, 0, 0));
+        cauHoi.setText("Câu hỏi 1 :");
 
         jLabel4.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
@@ -87,17 +158,27 @@ public class addQuestion extends javax.swing.JFrame {
         jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("ĐÚNG :");
 
-        jButton1.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
-        jButton1.setText("Lưu");
-
-        jButton2.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
-        jButton2.setText("Câu tiếp");
-
-        jButton3.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
-        jButton3.setText("Câu sau");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        saveBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        saveBtn.setText("Lưu");
+        saveBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                saveBtnActionPerformed(evt);
+            }
+        });
+
+        nextBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        nextBtn.setText("Câu tiếp");
+        nextBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextBtnActionPerformed(evt);
+            }
+        });
+
+        backBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        backBtn.setText("Câu sau");
+        backBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backBtnActionPerformed(evt);
             }
         });
 
@@ -109,11 +190,11 @@ public class addQuestion extends javax.swing.JFrame {
             .addComponent(numberExam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cauHoi, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -125,17 +206,17 @@ public class addQuestion extends javax.swing.JFrame {
                             .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
-                            .addComponent(jTextField2)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField4)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(answerA)
+                            .addComponent(answerB)
+                            .addComponent(answerD)
+                            .addComponent(answerC)
+                            .addComponent(answerCorrect, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE))))
                 .addGap(33, 33, 33)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nextBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(saveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(313, 313, 313))
         );
         layout.setVerticalGroup(
@@ -148,31 +229,31 @@ public class addQuestion extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cauHoi, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(answerA, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(answerB, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nextBtn)
+                    .addComponent(backBtn))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(answerC, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(answerD, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(answerCorrect)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
                 .addGap(31, 31, 31)
-                .addComponent(jButton1)
+                .addComponent(saveBtn)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
@@ -180,9 +261,140 @@ public class addQuestion extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+       
+//        if(dataList.get(pos).getStatus()==0)
+//        {
+//         this.question.setText("");
+//         this.answerA.setText("");
+//         this.answerB.setText("");
+//         this.answerC.setText("");
+//         this.answerD.setText("");
+//         this.answerCorrect.setText("");
+//         
+//         if(!this.question.getText().isEmpty() && !this.answerA.getText().isEmpty() && !this.answerB.getText().isEmpty() && !this.answerC.getText().isEmpty() && !this.answerD.getText().isEmpty() && !this.answerCorrect.getText().isEmpty())
+//        {
+//            Question q = new Question(
+//                nameExam1,
+//                numberExam1,
+//         this.question.getText(),
+//         this.answerA.getText(),
+//         this.answerB.getText(),
+//         this.answerC.getText(),
+//         this.answerD.getText(),
+//         Integer.parseInt(this.answerCorrect.getText()),
+//                1
+//        );
+//            dataList.add(q);
+        if(pos-1>=0)
+        {
+            if(!this.question.getText().isEmpty() && !this.answerA.getText().isEmpty() && !this.answerB.getText().isEmpty() && !this.answerC.getText().isEmpty() && !this.answerD.getText().isEmpty() && !this.answerCorrect.getText().isEmpty())
+                {
+                    Question q = new Question(
+                        nameExam1,
+                        numberExam1,
+                 this.question.getText(),
+                 this.answerA.getText(),
+                 this.answerB.getText(),
+                 this.answerC.getText(),
+                 this.answerD.getText(),
+                 Integer.parseInt(this.answerCorrect.getText()),
+                        1
+                );
+                    dataList.set(pos, q);
+
+                    pos--;
+                    View();
+                }
+            else{
+                 pos--;
+                View();
+            }
+        }
+            
+//        }
+//        }
+//        else{
+//         this.question.setText(dataList.get(pos).getQuestion());
+//         this.answerA.setText(dataList.get(pos).getAnswerA());
+//         this.answerB.setText(dataList.get(pos).getAnswerB());
+//         this.answerC.setText(dataList.get(pos).getAnswerC());
+//         this.answerD.setText(dataList.get(pos).getAnswerD());
+//         this.answerCorrect.setText(String.valueOf(dataList.get(pos).getAnswer()));
+//        }
+    }//GEN-LAST:event_backBtnActionPerformed
+
+    private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBtnActionPerformed
+        // TODO add your handling code here:
+        
+//        if(dataList.get(pos).getStatus()==0)
+//        {
+//            
+//         this.question.setText("");
+//         this.answerA.setText("");
+//         this.answerB.setText("");
+//         this.answerC.setText("");
+//         this.answerD.setText("");
+//         this.answerCorrect.setText("");
+
+            if(!this.question.getText().isEmpty() && !this.answerA.getText().isEmpty() && !this.answerB.getText().isEmpty() && !this.answerC.getText().isEmpty() && !this.answerD.getText().isEmpty() && !this.answerCorrect.getText().isEmpty())
+            {
+                Question q = new Question(
+                    nameExam1,
+                    numberExam1,
+             this.question.getText(),
+             this.answerA.getText(),
+             this.answerB.getText(),
+             this.answerC.getText(),
+             this.answerD.getText(),
+             Integer.parseInt(this.answerCorrect.getText()),
+                    1
+            );
+                dataList.set(pos, q);
+
+                
+                if(pos+1 <soCau)
+                {
+                    pos++;
+                    View();
+                }
+            }
+            else{
+                 JOptionPane.showMessageDialog(rootPane, "Không được để trống các ô trên !");
+            }
+
+         
+         
+//        }
+//        else{
+//            this.question.setText(dataList.get(pos).getQuestion());
+//            this.answerA.setText(dataList.get(pos).getAnswerA());
+//            this.answerB.setText(dataList.get(pos).getAnswerB());
+//            this.answerC.setText(dataList.get(pos).getAnswerC());
+//            this.answerD.setText(dataList.get(pos).getAnswerD());
+//            this.answerCorrect.setText(String.valueOf(dataList.get(pos).getAnswer()));
+//        }
+        
+        
+    }//GEN-LAST:event_nextBtnActionPerformed
+
+    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
+        // TODO add your handling code here:
+        
+
+        for(Question x:dataList)
+        {
+            ExamModify.insertQuestion(x);
+        }
+        JOptionPane.showMessageDialog(rootPane, "Thêm câu hỏi vào đề thành công !");
+        ((JFrame) SwingUtilities.getRoot(rootPane)).dispose();
+
+        // Mở trang mới
+        ExamForm ef = new ExamForm();
+        ef.setVisible(true);
+
+    }//GEN-LAST:event_saveBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -220,23 +432,23 @@ public class addQuestion extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JTextField answerA;
+    private javax.swing.JTextField answerB;
+    private javax.swing.JTextField answerC;
+    private javax.swing.JTextField answerCorrect;
+    private javax.swing.JTextField answerD;
+    private javax.swing.JButton backBtn;
+    private javax.swing.JLabel cauHoi;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JLabel nameExam;
+    private javax.swing.JButton nextBtn;
     private javax.swing.JLabel numberExam;
+    private javax.swing.JTextPane question;
+    private javax.swing.JButton saveBtn;
     // End of variables declaration//GEN-END:variables
 }

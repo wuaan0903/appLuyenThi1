@@ -81,6 +81,9 @@ public class ExamModify {
         
         return dataList;
     }
+    public void check(){
+        
+    }
     
     public static List<Question> getQuestion(String s,int a) {
         List<Question> dataList = new ArrayList<>();
@@ -160,6 +163,86 @@ public class ExamModify {
             statement.setInt(2, exam.getNumberExam());
             statement.setInt(3, exam.getSoCauHoi());
             statement.setInt(4, exam.getThoigian());
+            
+            statement.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ExamModify.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if(statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ExamModify.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if(conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ExamModify.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+    
+    public static void insertQuestion(Question q) {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        
+        try {
+            conn = DriverManager.getConnection(Config.DB_URL, Config.USERNAME, Config.PASSWORD);
+            
+            String sql = "insert into cauhoi(NameExam,numberExam, question, answerA, answerB, answerC, answerD, answer_correct, status) "
+                    + "values (?,?, ?, ?,?,?, ?, ?,?)";
+            statement = conn.prepareStatement(sql);
+            statement.setString(1, q.getNameExam());
+            statement.setInt(2, q.getNumberExam());
+            statement.setString(3, q.getQuestion() );
+            statement.setString(4, q.getAnswerA() );
+            statement.setString(5, q.getAnswerB());
+            statement.setString(6, q.getAnswerC());
+            statement.setString(7, q.getAnswerD());
+            statement.setInt(8, q.getAnswer());
+            statement.setInt(9, 0);
+            
+            statement.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ExamModify.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if(statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ExamModify.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if(conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ExamModify.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+    
+    public static void updateQuestion(Question q) {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        
+        try {
+            conn = DriverManager.getConnection(Config.DB_URL, Config.USERNAME, Config.PASSWORD);
+            
+            String sql = "update cauhoi set question = ?, answerA = ?, answerB = ?, answerC = ?, answerD = ?,answer_correct where NameExam = ? and numberExam = ?";
+            statement = conn.prepareStatement(sql);
+            statement.setString(1, q.getQuestion());
+            statement.setString(2, q.getAnswerA());
+            statement.setString(3, q.getAnswerB());
+            statement.setString(4, q.getAnswerC());
+            statement.setString(5, q.getAnswerD());
+            statement.setInt(6, q.getAnswer());
+            statement.setString(7, q.getNameExam());
+            statement.setInt(8, q.getNumberExam());
             
             statement.execute();
         } catch (SQLException ex) {

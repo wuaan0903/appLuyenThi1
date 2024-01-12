@@ -20,7 +20,23 @@ public class Question {
     private int answer;
     private int status;
 
+    public Question() {
+    }
 
+    
+    public Question(String NameExam, int numberExam, String question, String AnswerA, String AnswerB, String AnswerC, String AnswerD, int answer, int status) {
+        this.NameExam = NameExam;
+        this.numberExam = numberExam;
+        this.question = question;
+        this.AnswerA = AnswerA;
+        this.AnswerB = AnswerB;
+        this.AnswerC = AnswerC;
+        this.AnswerD = AnswerD;
+        this.answer = answer;
+        this.status = status;
+    }
+    
+    
 
     public Question(int id, String NameExam, int numberExam, String question, String AnswerA, String AnswerB, String AnswerC, String AnswerD, int answer, int status) {
         this.id = id;

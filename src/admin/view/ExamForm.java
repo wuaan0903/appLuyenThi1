@@ -294,7 +294,7 @@ public class ExamForm extends javax.swing.JFrame {
         ExamModify.insertExam(ex);
         dataList = ExamModify.getExamList(null,0);
         showData();
-        addQuestion aq = new addQuestion(selectedName,Integer.parseInt(this.numberExam.getText()));
+        addQuestion aq = new addQuestion(selectedName,Integer.parseInt(this.numberExam.getText()),soCau);
         aq.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed

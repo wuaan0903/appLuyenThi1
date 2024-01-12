@@ -169,7 +169,7 @@ public class LoginUsers extends javax.swing.JFrame {
             employee e = new employee(tk, passwd);
             employee checkE = checkEmployee(e);
             if (checkE != null) {
-                HomeForm hf = new HomeForm();
+                HomeForm hf = new HomeForm(checkE);
                 hf.setVisible(true);
                 this.dispose();
 
