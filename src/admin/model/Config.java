@@ -9,7 +9,7 @@ package admin.model;
  * @author admin
  */
 public interface Config {
-    String DB_URL = "jdbc:mysql://localhost:3306/tracnghiem";
+    String DB_URL = "jdbc:mysql://localhost:3306/tracnghiem2";
     String USERNAME = "root";
     String PASSWORD = "";
 }

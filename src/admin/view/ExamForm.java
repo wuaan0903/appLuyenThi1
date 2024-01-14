@@ -4,14 +4,19 @@
  */
 package admin.view;
 
+import exam.view.editQuestion;
 import exam.controller.ExamModify;
+import exam.model.Question;
 import exam.model.exam;
 import exam.view.addQuestion;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
 
 /**
  *
@@ -28,6 +33,25 @@ public class ExamForm extends javax.swing.JFrame {
 
     public ExamForm() {
         initComponents();
+
+        examTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int selectedRow = examTable.getSelectedRow();
+
+                    if (selectedRow != -1) {
+                        String nameExam = (String) examTable.getValueAt(selectedRow, 2);
+                        int numberExam = (int) examTable.getValueAt(selectedRow, 3);
+                        int soCau = (int) examTable.getValueAt(selectedRow, 4);
+
+                        editQuestion editForm = new editQuestion(nameExam, numberExam, soCau);
+                        editForm.setVisible(true);
+                        dispose();
+                    }
+                }
+            }
+        });
         tableModel = (DefaultTableModel) examTable.getModel();
         dataList = ExamModify.getExamList(null, 0);
 
@@ -63,6 +87,15 @@ public class ExamForm extends javax.swing.JFrame {
         });
     }
 
+    private int getSelectedExamId() {
+        int selectedRow = examTable.getSelectedRow();
+        if (selectedRow != -1) {
+            return (int) examTable.getValueAt(selectedRow, 1); // Giả sử cột ID là cột thứ 2
+        } else {
+            return -1; // Trả về -1 nếu không có hàng nào được chọn
+        }
+    }
+
     private void showData() {
         tableModel.setRowCount(0);
         for (exam ex : dataList) {
@@ -76,6 +109,8 @@ public class ExamForm extends javax.swing.JFrame {
             });
         }
     }
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -95,8 +130,8 @@ public class ExamForm extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         saveBtn = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        deleteexam = new javax.swing.JButton();
+        searchBtn = new javax.swing.JButton();
         backBtn = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         numberExam = new javax.swing.JTextField();
@@ -107,19 +142,31 @@ public class ExamForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
+        jPanel1.setForeground(new java.awt.Color(0, 0, 0));
 
+        examTable.setBackground(new java.awt.Color(204, 255, 204));
+        examTable.setForeground(new java.awt.Color(0, 0, 0));
         examTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "STT", "ID", "Tên đề", "Đề số", "Số câu", "Thời gian", "Chi tiết"
+                "STT", "ID", "Tên đề", "Đề số", "Số câu", "Thời gian"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        examTable.setRowHeight(40);
         jScrollPane1.setViewportView(examTable);
 
         jLabel1.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
@@ -144,6 +191,8 @@ public class ExamForm extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Thời gian :");
 
+        saveBtn.setBackground(new java.awt.Color(204, 255, 255));
+        saveBtn.setForeground(new java.awt.Color(0, 0, 0));
         saveBtn.setText("Thêm");
         saveBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -151,13 +200,25 @@ public class ExamForm extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Xóa");
+        deleteexam.setBackground(new java.awt.Color(204, 255, 255));
+        deleteexam.setForeground(new java.awt.Color(0, 0, 0));
+        deleteexam.setText("Xóa");
+        deleteexam.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteexamActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Tìm kiếm");
+        searchBtn.setBackground(new java.awt.Color(204, 255, 255));
+        searchBtn.setForeground(new java.awt.Color(0, 0, 0));
+        searchBtn.setText("Tìm kiếm");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
 
-        backBtn.setBackground(new java.awt.Color(255, 255, 255));
         backBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
-        backBtn.setForeground(new java.awt.Color(0, 0, 0));
         backBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/left-arrow-circle-solid-24.png"))); // NOI18N
         backBtn.setText("Back");
         backBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -171,19 +232,27 @@ public class ExamForm extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Đề số :");
 
+        numberExam.setBackground(new java.awt.Color(204, 255, 255));
+        numberExam.setForeground(new java.awt.Color(0, 0, 0));
         numberExam.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 numberExamActionPerformed(evt);
             }
         });
 
+        nameExam.setBackground(new java.awt.Color(204, 255, 255));
         nameExam.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        nameExam.setForeground(new java.awt.Color(0, 0, 0));
         nameExam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Lập trình hướng đối tượng", "Cơ sở dữ liệu", "Công nghệ Java", "Mạng máy tính", "Toán rời rạc", "Tin học đại cương" }));
 
+        thoiGian.setBackground(new java.awt.Color(204, 255, 255));
         thoiGian.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        thoiGian.setForeground(new java.awt.Color(0, 0, 0));
         thoiGian.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "15", "30", "45", "60", "90" }));
 
+        soCau.setBackground(new java.awt.Color(204, 255, 255));
         soCau.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        soCau.setForeground(new java.awt.Color(0, 0, 0));
         soCau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10", "15", "20", "40", "50" }));
 
         jLabel7.setBackground(new java.awt.Color(0, 0, 0));
@@ -229,8 +298,8 @@ public class ExamForm extends javax.swing.JFrame {
                 .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(saveBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(deleteexam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(137, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -247,21 +316,19 @@ public class ExamForm extends javax.swing.JFrame {
                     .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(deleteexam)
                     .addComponent(jLabel6)
                     .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(soCau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(thoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7))
-                        .addGap(2, 2, 2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                    .addComponent(searchBtn)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(soCau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5)
+                        .addComponent(thoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -283,18 +350,45 @@ public class ExamForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        // TODO add your handling code here:
+
         String selectedName = (String) this.nameExam.getSelectedItem();
-        int number = Integer.parseInt(this.numberExam.getText());
+        String numberExamText = this.numberExam.getText();
+
+        if (selectedName.isEmpty() || numberExamText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin đề thi.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return; // Dừng lại nếu có lỗi
+        }
+
+// Chuyển đổi numberExamText sang số nguyên
+        int number = Integer.parseInt(numberExamText);
+
+// Kiểm tra xem đã có bài kiểm tra với số bài kiểm tra giống nhau trong dataList chưa
+        for (exam existingExam : dataList) {
+            if (existingExam.getNameExam().equals(selectedName) && existingExam.getNumberExam() == number) {
+                JOptionPane.showMessageDialog(this, "Đề thi với số bài kiểm tra đã tồn tại trong " + selectedName + ".", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return; // Dừng lại nếu đã có bài kiểm tra với số bài kiểm tra giống nhau trong cùng một nameExam
+            }
+        }
+
         int soCau = Integer.parseInt((String) this.soCau.getSelectedItem());
         int thoiGian = Integer.parseInt((String) this.thoiGian.getSelectedItem());
-        exam ex;
-        ex = new exam(selectedName, number, soCau, thoiGian);
 
+// Tạo một đối tượng bài kiểm tra mới
+        exam ex = new exam(selectedName, number, soCau, thoiGian);
+
+// Chèn bài kiểm tra vào cơ sở dữ liệu
         ExamModify.insertExam(ex);
+
+// Cập nhật dataList
         dataList = ExamModify.getExamList(null, 0);
+
+// Hiển thị dữ liệu đã cập nhật
         showData();
-        addQuestion aq = new addQuestion(selectedName, Integer.parseInt(this.numberExam.getText()), soCau);
+
+        JOptionPane.showMessageDialog(this, "Đã thêm đề thi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+// Mở cửa sổ addQuestion
+        addQuestion aq = new addQuestion(selectedName, number, soCau);
         aq.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed
@@ -309,6 +403,50 @@ public class ExamForm extends javax.swing.JFrame {
     private void numberExamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberExamActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_numberExamActionPerformed
+
+    private void deleteexamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteexamActionPerformed
+        // TODO add your handling code here:
+        int examIdToDelete = getSelectedExamId();
+        if (examIdToDelete != -1) {
+            int confirmation = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa kỳ thi này?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+            if (confirmation == JOptionPane.YES_OPTION) {
+                ExamModify.delete(examIdToDelete);
+                dataList = ExamModify.getExamList(null, 0);
+                showData();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Chưa chọn kỳ thi để xóa.");
+        }
+    }//GEN-LAST:event_deleteexamActionPerformed
+
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        // TODO add your handling code here:
+        String searchName = JOptionPane.showInputDialog(this, "Nhập tên đề thi cần tìm kiếm:");
+        int numberOfQuestions = -1;
+
+        if (searchName != null && !searchName.isEmpty()) {
+            String numberOfQuestionsInput = JOptionPane.showInputDialog(this, "Nhập Đề thi số (nếu có):");
+            if (numberOfQuestionsInput != null && !numberOfQuestionsInput.isEmpty()) {
+                try {
+                    numberOfQuestions = Integer.parseInt(numberOfQuestionsInput);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Đề thi không hợp lệ. Vui lòng nhập lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            dataList = ExamModify.getExamList(searchName, numberOfQuestions);
+            showData();
+
+            // In ra console để kiểm tra
+            System.out.println("Kết quả tìm kiếm:");
+            for (exam ex : dataList) {
+                System.out.println("ID: " + ex.getId() + ", Tên đề: " + ex.getNameExam() + ", Số câu: " + ex.getSoCauHoi() + ", Thời gian: " + ex.getThoigian());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đề thi cần tìm kiếm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_searchBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -336,6 +474,9 @@ public class ExamForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ExamForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -347,9 +488,8 @@ public class ExamForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
+    private javax.swing.JButton deleteexam;
     private javax.swing.JTable examTable;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -362,6 +502,7 @@ public class ExamForm extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> nameExam;
     private javax.swing.JTextField numberExam;
     private javax.swing.JButton saveBtn;
+    private javax.swing.JButton searchBtn;
     private javax.swing.JComboBox<String> soCau;
     private javax.swing.JComboBox<String> thoiGian;
     // End of variables declaration//GEN-END:variables

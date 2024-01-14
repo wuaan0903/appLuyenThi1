@@ -34,6 +34,17 @@ public class employee {
         this.gender = gender;
     }
 
+    public employee(String nameTK, String password, String name, String dob, String address, String phone, String gender) {
+        this.nameTK = nameTK;
+        this.password = password;
+        this.name = name;
+        this.dob = dob;
+        this.address = address;
+        this.phone = phone;
+        this.gender = gender;
+    }
+    
+
     public employee(String nameTK, String password) {
         this.nameTK = nameTK;
         this.password = password;

@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import user.controller.DataUserFunction;
 
 /**
  *
@@ -20,16 +21,15 @@ public class InforUser extends javax.swing.JFrame {
     /**
      * Creates new form InforUser
      */
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/tracnghiem";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "";
+
     public InforUser(String idUser, String nameU) {
         initComponents();
         nameIf.setText(nameU);
         idIf.setText(idUser);
         if (isValidUserId(idUser)) {
             // Nếu ID hợp lệ, hiển thị dữ liệu vào bảng
-            displayUserInfo(Integer.parseInt(idUser));
+            employee e = DataUserFunction.getUserListById(Integer.parseInt(idUser));
+            displayUserInfo(e);
         } else {
             // Nếu ID không hợp lệ, hiển thị thông báo hoặc thực hiện hành động khác
             System.out.println("Invalid user ID");
@@ -46,42 +46,17 @@ public class InforUser extends javax.swing.JFrame {
         // Trong ví dụ này, giả sử ID hợp lệ nếu không rỗng
         return !idUser.isEmpty();
     }
-    private void displayUserInfo(int userId) {
-        try {
-            // Tạo kết nối JDBC
-            Connection connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
+    private void displayUserInfo(employee e) {
+        
+                // Lấy thông tin từ ResultSet và hiển thị lên giao diện
+                nameTk.setText("Tài khoản : "+e.getNameTK());
+                nameIf.setText(e.getName());
+                idIf.setText(String.valueOf(e.getId()));
+                dobIf.setText(e.getDob());
+                phonenumber.setText(e.getPhone());
+                genderIf.setText(e.getGender());
+                addressIf.setText(e.getAddress());
 
-            // Chuẩn bị câu truy vấn SQL với tham số
-            String sql = "SELECT * FROM users WHERE id = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                // Đặt giá trị cho tham số
-                preparedStatement.setInt(1, userId);
-
-                // Thực hiện truy vấn
-                ResultSet resultSet;
-                resultSet = preparedStatement.executeQuery();
-
-                // Kiểm tra xem có dữ liệu hay không
-                if (resultSet.next()) {
-                    // Lấy thông tin từ ResultSet và hiển thị lên giao diện
-                    nameTk.setText(resultSet.getString("username"));
-                    nameIf.setText(resultSet.getString("fullname"));
-                    idIf.setText(resultSet.getString("id"));
-                    dobIf.setText(resultSet.getString("dob"));
-                    phonenumber.setText(resultSet.getString("phone_number"));
-                    genderIf.setText(resultSet.getString("gender"));
-                    addressIf.setText(resultSet.getString("address"));
-                } else {
-                    // ID không tồn tại
-                    System.out.println("Không tìm thấy người dùng với ID: " + userId);
-                }
-            }
-
-            // Đóng kết nối JDBC
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
     
 
@@ -98,8 +73,6 @@ public class InforUser extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jPanel6 = new javax.swing.JPanel();
-        sfsfs = new javax.swing.JLabel();
         nameTk = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -134,9 +107,10 @@ public class InforUser extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 204));
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 204));
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Montserrat", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("Thông tin sinh viên");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("THÔNG TIN CÁ NHÂN");
 
         jButton1.setBackground(new java.awt.Color(204, 255, 204));
         jButton1.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
@@ -150,59 +124,32 @@ public class InforUser extends javax.swing.JFrame {
             }
         });
 
-        jPanel6.setBackground(new java.awt.Color(255, 255, 204));
-
-        sfsfs.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        sfsfs.setForeground(new java.awt.Color(0, 0, 0));
-        sfsfs.setText("Tài khoản: ");
-
-        nameTk.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        nameTk.setForeground(new java.awt.Color(0, 0, 0));
-        nameTk.setText("ssfsd");
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addComponent(sfsfs)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nameTk)
-                .addContainerGap(16, Short.MAX_VALUE))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nameTk, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
-                    .addComponent(sfsfs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+        nameTk.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        nameTk.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(184, 184, 184)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(159, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addGap(60, 60, 60)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(nameTk, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(36, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(nameTk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -212,32 +159,32 @@ public class InforUser extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(204, 255, 204));
 
         jLabel6.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Họ tên sinh viên: ");
 
         jLabel2.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Ngày sinh:");
 
         jLabel3.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Địa chỉ: ");
 
         jLabel4.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Số điện thoại:");
 
         jLabel5.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Giới tính:");
 
         jLabel7.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Mã sinh viên:");
 
@@ -277,32 +224,32 @@ public class InforUser extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(204, 255, 204));
 
         nameIf.setBackground(new java.awt.Color(153, 153, 153));
-        nameIf.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        nameIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         nameIf.setForeground(new java.awt.Color(0, 0, 0));
         nameIf.setText("Phan Văn Tươi");
 
         dobIf.setBackground(new java.awt.Color(153, 153, 153));
-        dobIf.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        dobIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         dobIf.setForeground(new java.awt.Color(0, 0, 0));
         dobIf.setText("24/7/2003");
 
         phonenumber.setBackground(new java.awt.Color(153, 153, 153));
-        phonenumber.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        phonenumber.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         phonenumber.setForeground(new java.awt.Color(0, 0, 0));
         phonenumber.setText("0394475956");
 
         genderIf.setBackground(new java.awt.Color(153, 153, 153));
-        genderIf.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        genderIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         genderIf.setForeground(new java.awt.Color(0, 0, 0));
         genderIf.setText("Nam");
 
         addressIf.setBackground(new java.awt.Color(153, 153, 153));
-        addressIf.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        addressIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         addressIf.setForeground(new java.awt.Color(0, 0, 0));
         addressIf.setText("Thanh Hóa");
 
         idIf.setBackground(new java.awt.Color(153, 153, 153));
-        idIf.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        idIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         idIf.setForeground(new java.awt.Color(0, 0, 0));
         idIf.setText("241");
 
@@ -383,6 +330,7 @@ public class InforUser extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -445,10 +393,8 @@ public class InforUser extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JLabel nameIf;
     private javax.swing.JLabel nameTk;
     private javax.swing.JLabel phonenumber;
-    private javax.swing.JLabel sfsfs;
     // End of variables declaration//GEN-END:variables
 }

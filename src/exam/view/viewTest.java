@@ -4,6 +4,7 @@
  */
 package exam.view;
 
+import admin.model.Config;
 import com.mysql.cj.protocol.x.Notice;
 import com.sun.jdi.connect.spi.Connection;
 
@@ -20,6 +21,9 @@ import javax.swing.Timer;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import user.view.HistoryList;
 
 /**
@@ -44,17 +48,13 @@ public class viewTest extends javax.swing.JFrame {
         private static java.sql.Connection connection;
 
         public static java.sql.Connection getConnection() {
-            if (connection == null) {
-                try {
-                    // Thay đổi thông tin kết nối theo CSDL của bạn
-                    String url = "jdbc:mysql://localhost:3306/tracnghiem";
-                    String username = "root";
-                    String password = "";
+            try {
+                if (connection == null || connection.isClosed()) {
 
-                    connection = DriverManager.getConnection(url, username, password);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    connection = DriverManager.getConnection(Config.DB_URL, Config.USERNAME, Config.PASSWORD);
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
             return connection;
         }
@@ -68,7 +68,7 @@ public class viewTest extends javax.swing.JFrame {
         View();
         ViewList();
         nameExam.setText(e.getNameExam());
-        numberExam.setText("" + e.getNumberExam());
+        numberExa.setText("" + e.getNumberExam());
         totalTimeInSeconds = e.getThoigian() * 60;
         startCountdown();
     }
@@ -88,7 +88,7 @@ public class viewTest extends javax.swing.JFrame {
                 // Hết giờ
                 time.setText("Hết giờ!");
                 countdownTimer.stop();
-                ResultForm rf = new ResultForm(this.getScore(), this.getTime(), dataList);
+                ResultForm rf = new ResultForm(this.getKq(), this.getScore(), this.getTime(), dataList, idU.getText(), nameU.getText(), nameExam.getText());
                 rf.setVisible(true);
                 this.dispose();
                 // Dừng đồng hồ đếm ngược khi hết giờ
@@ -100,10 +100,10 @@ public class viewTest extends javax.swing.JFrame {
 
     int getTime() {
 
-        int timeSpentInSeconds = initialTimeInSeconds - totalTimeInSeconds;
-        ResultForm rf = new ResultForm(this.getScore(), timeSpentInSeconds, dataList);
-        rf.setVisible(true);
-        this.dispose();
+//        int timeSpentInSeconds = initialTimeInSeconds - totalTimeInSeconds;
+//        ResultForm rf = new ResultForm(this.getScore(), timeSpentInSeconds, dataList, idU.getText(),nameU.getText(),nameExam.getText());
+//        rf.setVisible(true);
+//        this.dispose();
         return initialTimeInSeconds - totalTimeInSeconds;
     }
 
@@ -162,14 +162,50 @@ public class viewTest extends javax.swing.JFrame {
         return n;
     }
 
-    int getScore() {
-        int d = 0;
+//    double getScore() {
+//        double d = 0;
+//        for (Question x : dataList) {
+//            if (x.getAnswer() == x.getStatus()) {
+//                d++;
+//            }
+//        }
+//        return d * (10.0 / dataList.size());// Trả về điểm số
+//    }
+    double getScore() {
+        double d = 0;
         for (Question x : dataList) {
             if (x.getAnswer() == x.getStatus()) {
                 d++;
             }
         }
-        return d;
+
+        double score = d * (10.0 / dataList.size());
+
+        // Sử dụng DecimalFormat để chỉ giữ lại hai số sau dấu phẩy
+        DecimalFormat df = new DecimalFormat("#.##");
+        return Double.parseDouble(df.format(score));
+    }
+
+    String getKq() {
+        int correctAnswers = 0;
+        for (Question x : dataList) {
+            if (x.getAnswer() == x.getStatus()) {
+                correctAnswers++;
+            }
+        }
+        int totalQuestions = dataList.size();
+        return correctAnswers + "/" + totalQuestions; // Trả về số câu đúng trên tổng số câu hỏi
+    }
+
+    String formatScore(double score) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(score);
+    }
+
+    String getCurrentDateTimeAsString() {
+        Date currentDateTime = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+        return dateFormat.format(currentDateTime);
     }
 
     public void OnOff(boolean a, boolean b, boolean c, boolean d) {
@@ -208,7 +244,6 @@ public class viewTest extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        numberExam = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         question = new javax.swing.JLabel();
         BackBtn = new javax.swing.JButton();
@@ -222,21 +257,21 @@ public class viewTest extends javax.swing.JFrame {
         ExitBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listQ = new javax.swing.JList<>();
-        nameExam = new javax.swing.JLabel();
         time = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         idU = new javax.swing.JLabel();
         nameU = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        dfdf = new javax.swing.JLabel();
+        numberExam = new javax.swing.JLabel();
+        nameExam = new javax.swing.JLabel();
+        sds = new javax.swing.JLabel();
+        numberExa = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        numberExam.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
-        numberExam.setForeground(new java.awt.Color(0, 0, 0));
-        numberExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        numberExam.setText("ĐỀ THI SỐ 1");
 
         jPanel2.setBackground(new java.awt.Color(0, 153, 153));
 
@@ -389,11 +424,6 @@ public class viewTest extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(listQ);
 
-        nameExam.setFont(new java.awt.Font("Montserrat", 0, 20)); // NOI18N
-        nameExam.setForeground(new java.awt.Color(0, 0, 0));
-        nameExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        nameExam.setText("Môn học : Mạng máy tính");
-
         time.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
         time.setForeground(new java.awt.Color(0, 0, 0));
         time.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/timer-regular-36.png"))); // NOI18N
@@ -436,6 +466,63 @@ public class viewTest extends javax.swing.JFrame {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+
+        dfdf.setFont(new java.awt.Font("Montserrat", 0, 20)); // NOI18N
+        dfdf.setForeground(new java.awt.Color(0, 0, 0));
+        dfdf.setText("Môn thi :");
+
+        numberExam.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
+        numberExam.setForeground(new java.awt.Color(0, 0, 0));
+        numberExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        nameExam.setFont(new java.awt.Font("Montserrat", 0, 20)); // NOI18N
+        nameExam.setForeground(new java.awt.Color(0, 0, 0));
+        nameExam.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        sds.setFont(new java.awt.Font("Montserrat", 0, 20)); // NOI18N
+        sds.setForeground(new java.awt.Color(0, 0, 0));
+        sds.setText("Đề số :");
+
+        numberExa.setFont(new java.awt.Font("Montserrat", 0, 20)); // NOI18N
+        numberExa.setForeground(new java.awt.Color(0, 0, 0));
+        numberExa.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(dfdf, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(sds, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(numberExa, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(41, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dfdf, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(sds, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(numberExa, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(12, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -443,13 +530,6 @@ public class viewTest extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(82, 82, 82)
-                        .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(135, 135, 135)
-                        .addComponent(time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(348, 348, 348))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -461,28 +541,33 @@ public class viewTest extends javax.swing.JFrame {
                                     .addComponent(submitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(ExitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(280, 280, 280)
-                .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(44, 44, 44)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(70, 70, 70)
+                        .addComponent(time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(348, 348, 348))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(time, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)))
-                .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(time, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(49, 49, 49))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(17, Short.MAX_VALUE)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -516,7 +601,9 @@ public class viewTest extends javax.swing.JFrame {
     }//GEN-LAST:event_answerDActionPerformed
 
     private void ExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitBtnActionPerformed
-        // TODO add your handling code here:
+        listExam le = new listExam(nameExam.getText(), idU.getText(), nameU.getText());
+        le.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_ExitBtnActionPerformed
 
     private void listQValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listQValueChanged
@@ -536,25 +623,29 @@ public class viewTest extends javax.swing.JFrame {
         double score = this.getScore();
         int timer = this.getTime();
         String formattedTime = convertSecondsToTime(timer);
+        String kqU = this.getKq();
+        String date = this.getCurrentDateTimeAsString();
 
         // Lấy thông tin người dùng hoặc các dữ liệu cần thiết từ form
         String selectedName = (String) this.nameExam.getText(); // Thay thế nameExam bằng thành phần tương ứng trên form của bạn
         String NameUser = (String) this.nameU.getText();
-        int numberEx = Integer.parseInt(this.numberExam.getText());
+        int numberEx = Integer.parseInt(this.numberExa.getText());
         int userID = Integer.parseInt(this.idU.getText()); // Thay thế idd bằng thành phần tương ứng trên form của bạn
 
         // Kết nối đến cơ sở dữ liệu
         try (java.sql.Connection connection = DatabaseConnection.getConnection()) {
             // Thực hiện truy vấn SQL để chèn dữ liệu vào bảng history_test
-            String sql = "INSERT INTO history_test (user_id,name, nameExam, ID_exam, total, time_completed) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO history_test (user_id,name, nameExam, ID_exam,kq, total, time_completed, date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (java.sql.PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, userID);
                 preparedStatement.setString(2, NameUser);
                 preparedStatement.setString(3, selectedName);
                 preparedStatement.setInt(4, numberEx);
-                preparedStatement.setDouble(5, score);
-                preparedStatement.setString(6, formattedTime);
+                preparedStatement.setString(5, kqU);
+                preparedStatement.setString(6, String.valueOf(score));
+                preparedStatement.setString(7, formattedTime);
+                preparedStatement.setString(8, date);
 
                 // Thực hiện lưu dữ liệu vào bảng
                 preparedStatement.executeUpdate();
@@ -565,8 +656,9 @@ public class viewTest extends javax.swing.JFrame {
             e.printStackTrace();
             // Xử lý lỗi, có thể hiển thị thông báo lỗi cho người dùng nếu cần
         }
-        ResultForm rf = new ResultForm(this.getScore(), this.getTime(), dataList);
+        ResultForm rf = new ResultForm(this.getKq(), this.getScore(), this.getTime(), dataList, idU.getText(), nameU.getText(), nameExam.getText());
         rf.setVisible(true);
+        this.dispose();
 
 
     }//GEN-LAST:event_submitBtnActionPerformed
@@ -633,18 +725,22 @@ public class viewTest extends javax.swing.JFrame {
     private javax.swing.JRadioButton answerC;
     private javax.swing.JRadioButton answerD;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel dfdf;
     private javax.swing.JLabel idU;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<String> listQ;
     private javax.swing.JLabel nameExam;
     private javax.swing.JLabel nameU;
+    private javax.swing.JLabel numberExa;
     private javax.swing.JLabel numberExam;
     private javax.swing.JLabel question;
+    private javax.swing.JLabel sds;
     private javax.swing.JButton submitBtn;
     private javax.swing.JLabel time;
     // End of variables declaration//GEN-END:variables

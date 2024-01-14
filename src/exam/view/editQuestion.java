@@ -5,94 +5,111 @@
 package exam.view;
 
 import admin.view.ExamForm;
+import com.mysql.cj.protocol.x.Notice;
+import com.sun.jdi.connect.spi.Connection;
+import exam.view.*;
 import exam.controller.ExamModify;
 import exam.model.Question;
 import java.awt.Window;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import java.sql.SQLException;
+
 import javax.swing.SwingUtilities;
 
 /**
  *
  * @author admin
  */
-public class addQuestion extends javax.swing.JFrame {
+public class editQuestion extends javax.swing.JFrame {
 
     /**
      * Creates new form addQuestion
      */
+    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/tracnghiem2";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "";
     List<Question> dataList = new ArrayList<>();
-    int pos=0;
+    int pos = 0;
+    Question q;
     String nameExam1;
     int numberExam1;
     int soCau;
-    public addQuestion()
-    {
+
+    public editQuestion() {
         initComponents();
         nameExam1 = "TEST";
-        numberExam1=2;
+        numberExam1 = 2;
         soCau = 3;
-        for(int i=0;i<soCau;i++)
-        {
-            
+        for (int i = 0; i < soCau; i++) {
             Question q = new Question();
             q.setStatus(0);
             dataList.add(q);
         }
+        loadDataFromDatabase();
         View();
-        
-        
-    }
-    public addQuestion(String s,int a,int b) {
-        initComponents();
-        nameExam.setText("Môn học : "+ s);
-        numberExam.setText("ĐỀ THI SỐ " +a);
-        nameExam1 = s;
-        numberExam1=a;
-        soCau = b;
-        cauHoi.setText("Câu Hỏi " +(pos+1));
-        for(int i=0;i<b;i++)
-        {
-            Question q = new Question();
-            q.setStatus(0);
-            dataList.add(q);
-        }
-        View();
-        
 
     }
-    
-    public void View(){
-        cauHoi.setText("Câu Hỏi "+(pos+1));
-        if(dataList.get(pos).getStatus()==0)
-        {
-         this.question.setText("");
-         this.answerA.setText("");
-         this.answerB.setText("");
-         this.answerC.setText("");
-         this.answerD.setText("");
-         this.answerCorrect.setSelectedItem("");
+
+    public editQuestion(String s, int a, int b) {
+        initComponents();
+        nameExam.setText("Môn học : "+s);
+        numberExam.setText("ĐỀ THI SỐ " + a);
+        nameExam1 = s;
+        numberExam1 = a;
+        soCau = b;
+        cauHoi.setText("Câu hỏi " + (pos + 1));
+        for (int i = 0; i < b; i++) {
+            Question q = new Question();
+            q.setStatus(0);
+            dataList.add(q);
         }
-        else{
-            this.question.setText(dataList.get(pos).getQuestion());
-            this.answerA.setText(dataList.get(pos).getAnswerA());
-            this.answerB.setText(dataList.get(pos).getAnswerB());
-            this.answerC.setText(dataList.get(pos).getAnswerC());
-            this.answerD.setText(dataList.get(pos).getAnswerD());
-            this.answerCorrect.setSelectedItem(String.valueOf(dataList.get(pos).getAnswer()));
-        }
-        
-        if(pos ==soCau-1)
-        {
-            saveBtn.setVisible(true);
-        }
-        else{
-              saveBtn.setVisible(false);
-                }
+        loadDataFromDatabase();
+        View();
+
     }
-    
+
+    private void loadDataFromDatabase() {
+        dataList= ExamModify.getQuestion(nameExam1, numberExam1);
+
+    }
+
+    public void View() {
+        if (pos >= 0 && pos < dataList.size()) {
+            cauHoi.setText("Câu Hỏi " + (pos + 1));
+            nameExam.setText("Môn học : " + nameExam1);
+            numberExam.setText("ĐỀ THI SỐ " + numberExam1);
+
+            q = dataList.get(pos);
+            this.question.setText(q.getQuestion());
+            this.answerA.setText(q.getAnswerA());
+            this.answerB.setText(q.getAnswerB());
+            this.answerC.setText(q.getAnswerC());
+            this.answerD.setText(q.getAnswerD());
+            int answerValue = q.getAnswer();
+            this.answerCorrect.setText(convertNumberToLetter(answerValue));
+        }
+    }
+
+    private String convertNumberToLetter(int number) {
+        switch (number) {
+            case 1:
+                return "A";
+            case 2:
+                return "B";
+            case 3:
+                return "C";
+            case 4:
+                return "D";
+            default:
+                return "";
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -120,17 +137,16 @@ public class addQuestion extends javax.swing.JFrame {
         saveBtn = new javax.swing.JButton();
         nextBtn = new javax.swing.JButton();
         backBtn = new javax.swing.JButton();
-        answerCorrect = new javax.swing.JComboBox<>();
+        backbtn = new javax.swing.JButton();
+        answerCorrect = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         nameExam.setFont(new java.awt.Font("Montserrat", 0, 24)); // NOI18N
         nameExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        nameExam.setText("Môn học : Mạng máy tính");
 
         numberExam.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
         numberExam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        numberExam.setText("ĐỀ THI SỐ 1");
 
         jScrollPane1.setViewportView(question);
 
@@ -176,7 +192,17 @@ public class addQuestion extends javax.swing.JFrame {
             }
         });
 
-        answerCorrect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "A", "B", "C", "D" }));
+        backbtn.setBackground(new java.awt.Color(204, 255, 204));
+        backbtn.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
+        backbtn.setForeground(new java.awt.Color(0, 0, 0));
+        backbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/left-arrow-circle-solid-24.png"))); // NOI18N
+        backbtn.setText("Quay lại");
+        backbtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        backbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backbtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -206,7 +232,7 @@ public class addQuestion extends javax.swing.JFrame {
                             .addComponent(answerB)
                             .addComponent(answerD)
                             .addComponent(answerC)
-                            .addComponent(answerCorrect, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(answerCorrect))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addComponent(nextBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
@@ -214,11 +240,17 @@ public class addQuestion extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(saveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(313, 313, 313))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(backbtn)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addContainerGap()
+                .addComponent(backbtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -247,10 +279,10 @@ public class addQuestion extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(answerCorrect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                    .addComponent(answerCorrect, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
                 .addComponent(saveBtn)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
@@ -258,44 +290,68 @@ public class addQuestion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
-        // TODO add your handling code here:
-       
-//        if(dataList.get(pos).getStatus()==0)
-//        {
-//         this.question.setText("");
-//         this.answerA.setText("");
-//         this.answerB.setText("");
-//         this.answerC.setText("");
-//         this.answerD.setText("");
-//         this.answerCorrect.setText("");
-//         
-//         if(!this.question.getText().isEmpty() && !this.answerA.getText().isEmpty() && !this.answerB.getText().isEmpty() && !this.answerC.getText().isEmpty() && !this.answerD.getText().isEmpty() && !this.answerCorrect.getText().isEmpty())
-//        {
-//            Question q = new Question(
-//                nameExam1,
-//                numberExam1,
-//         this.question.getText(),
-//         this.answerA.getText(),
-//         this.answerB.getText(),
-//         this.answerC.getText(),
-//         this.answerD.getText(),
-//         Integer.parseInt(this.answerCorrect.getSelectedItem().toString())
+        if (pos - 1 >= 0) {
+            if (!question.getText().isEmpty()
+                    && !answerA.getText().isEmpty()
+                    && !answerB.getText().isEmpty()
+                    && !answerC.getText().isEmpty()
+                    && !answerD.getText().isEmpty()
+                    && !answerCorrect.getText().isEmpty()) {
 
-//                1
-//        );
-//            dataList.add(q);
-         if (pos - 1 >= 0) {
-        if (!question.getText().isEmpty() &&
-            !answerA.getText().isEmpty() &&
-            !answerB.getText().isEmpty() &&
-            !answerC.getText().isEmpty() &&
-            !answerD.getText().isEmpty() &&
-            answerCorrect.getSelectedItem() != null &&
-            !answerCorrect.getSelectedItem().toString().isEmpty()) {
+                String selectedAnswer = answerCorrect.getText().toUpperCase();
 
-            String selectedAnswer = answerCorrect.getSelectedItem().toString();
+                int answerValue = 0;
 
-            int answerValue = 0;
+                switch (selectedAnswer) {
+                    case "A":
+                        answerValue = 1;
+                        break;
+                    case "B":
+                        answerValue = 2;
+                        break;
+                    case "C":
+                        answerValue = 3;
+                        break;
+                    case "D":
+                        answerValue = 4;
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
+                        return; // Kết thúc phương thức nếu giá trị không hợp lệ
+                }
+
+                Question q = new Question(
+                        nameExam1,
+                        numberExam1,
+                        question.getText(),
+                        answerA.getText(),
+                        answerB.getText(),
+                        answerC.getText(),
+                        answerD.getText(),
+                        answerValue,
+                        1
+                );
+
+                dataList.set(pos, q);
+            }
+
+            pos--;
+            View();
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Đã đến câu hỏi đầu tiên, không thể quay lại.");
+        }
+    }//GEN-LAST:event_backBtnActionPerformed
+
+    private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBtnActionPerformed
+        if (!this.question.getText().isEmpty()
+                && !this.answerA.getText().isEmpty()
+                && !this.answerB.getText().isEmpty()
+                && !this.answerC.getText().isEmpty()
+                && !this.answerD.getText().isEmpty()
+                && !this.answerCorrect.getText().isEmpty()) {
+
+            String selectedAnswer = this.answerCorrect.getText().toUpperCase();
+            int answerValue;
 
             switch (selectedAnswer) {
                 case "A":
@@ -311,143 +367,56 @@ public class addQuestion extends javax.swing.JFrame {
                     answerValue = 4;
                     break;
                 default:
-                    // Xử lý trường hợp không hợp lệ
-                    JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
-                    return;
+                    answerValue = 0; // Giá trị mặc định nếu không phải A, B, C, D
+                    break;
             }
 
-            Question q = new Question(
-                nameExam1,
-                numberExam1,
-                question.getText(),
-                answerA.getText(),
-                answerB.getText(),
-                answerC.getText(),
-                answerD.getText(),
-                answerValue,
-                1
-            );
+            if (answerValue != 0) { // Nếu giá trị hợp lệ
+                Question q = new Question(
+                        nameExam1,
+                        numberExam1,
+                        this.question.getText(),
+                        this.answerA.getText(),
+                        this.answerB.getText(),
+                        this.answerC.getText(),
+                        this.answerD.getText(),
+                        answerValue,
+                        1
+                );
 
-            dataList.set(pos, q);
-        }
+                dataList.set(pos, q);
 
-        pos--;
-        View();
-    }
-            
-//        }
-//        }
-//        else{
-//         this.question.setText(dataList.get(pos).getQuestion());
-//         this.answerA.setText(dataList.get(pos).getAnswerA());
-//         this.answerB.setText(dataList.get(pos).getAnswerB());
-//         this.answerC.setText(dataList.get(pos).getAnswerC());
-//         this.answerD.setText(dataList.get(pos).getAnswerD());
-//         this.answerCorrect.setText(String.valueOf(dataList.get(pos).getAnswer()));
-//        }
-    }//GEN-LAST:event_backBtnActionPerformed
-
-    private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBtnActionPerformed
-        // TODO add your handling code here:
-        
-//        if(dataList.get(pos).getStatus()==0)
-//        {
-//            
-//         this.question.setText("");
-//         this.answerA.setText("");
-//         this.answerB.setText("");
-//         this.answerC.setText("");
-//         this.answerD.setText("");
-//         this.answerCorrect.setText("");
-
-            if (!this.question.getText().isEmpty() &&
-        !this.answerA.getText().isEmpty() &&
-        !this.answerB.getText().isEmpty() &&
-        !this.answerC.getText().isEmpty() &&
-        !this.answerD.getText().isEmpty() &&
-        this.answerCorrect.getSelectedItem() != null &&
-        !this.answerCorrect.getSelectedItem().toString().isEmpty()) {
-
-        String selectedAnswer = this.answerCorrect.getSelectedItem().toString();
-        int answerValue;
-
-        switch (selectedAnswer) {
-            case "A":
-                answerValue = 1;
-                break;
-            case "B":
-                answerValue = 2;
-                break;
-            case "C":
-                answerValue = 3;
-                break;
-            case "D":
-                answerValue = 4;
-                break;
-            default:
-                answerValue = 0; // Giá trị mặc định nếu không phải A, B, C, D
-                break;
-        }
-
-        if (answerValue != 0) { // Nếu giá trị hợp lệ
-            Question q = new Question(
-                nameExam1,
-                numberExam1,
-                this.question.getText(),
-                this.answerA.getText(),
-                this.answerB.getText(),
-                this.answerC.getText(),
-                this.answerD.getText(),
-                answerValue,
-                1
-            );
-
-            dataList.set(pos, q);
-
-            if (pos + 1 < soCau) {
-                pos++;
-                View();
+                if (pos + 1 < soCau) {
+                    pos++;
+                    View();
+                } else {
+                    JOptionPane.showMessageDialog(rootPane, "Không thể chuyển sang câu hỏi tiếp theo. Hãy lưu câu hỏi nếu bạn đã nhập đủ câu hỏi.");
+                }
             } else {
-                JOptionPane.showMessageDialog(rootPane, "Không thể chuyển sang câu hỏi tiếp theo. Hãy lưu câu hỏi nếu bạn đã nhập đủ câu hỏi.");
+                JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
             }
         } else {
-            JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
+            JOptionPane.showMessageDialog(rootPane, "Không được để trống các ô trên !");
         }
-    } else {
-        JOptionPane.showMessageDialog(rootPane, "Không được để trống các ô trên !");
-    }
-
-         
-         
-//        }
-//        else{
-//            this.question.setText(dataList.get(pos).getQuestion());
-//            this.answerA.setText(dataList.get(pos).getAnswerA());
-//            this.answerB.setText(dataList.get(pos).getAnswerB());
-//            this.answerC.setText(dataList.get(pos).getAnswerC());
-//            this.answerD.setText(dataList.get(pos).getAnswerD());
-//            this.answerCorrect.setText(String.valueOf(dataList.get(pos).getAnswer()));
-//        }
-        
-        
     }//GEN-LAST:event_nextBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        // TODO add your handling code here:
-        
-
+ 
+        ExamModify.deleteQưestion(nameExam1, numberExam1);
         for(Question x:dataList)
         {
             ExamModify.insertQuestion(x);
         }
-        JOptionPane.showMessageDialog(rootPane, "Thêm câu hỏi vào đề thành công !");
-        ((JFrame) SwingUtilities.getRoot(rootPane)).dispose();
+        JOptionPane.showMessageDialog(rootPane, "Cập nhật câu hỏi vào đề thành công !");
 
-        // Mở trang mới
-        ExamForm ef = new ExamForm();
-        ef.setVisible(true);
 
     }//GEN-LAST:event_saveBtnActionPerformed
+
+    private void backbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backbtnActionPerformed
+        ExamForm ef = new ExamForm();
+        ef.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_backbtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -466,14 +435,26 @@ public class addQuestion extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(addQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(addQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(addQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(addQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -482,7 +463,7 @@ public class addQuestion extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new addQuestion().setVisible(true);
+                new editQuestion().setVisible(true);
             }
         });
     }
@@ -491,9 +472,10 @@ public class addQuestion extends javax.swing.JFrame {
     private javax.swing.JTextField answerA;
     private javax.swing.JTextField answerB;
     private javax.swing.JTextField answerC;
-    private javax.swing.JComboBox<String> answerCorrect;
+    private javax.swing.JTextField answerCorrect;
     private javax.swing.JTextField answerD;
     private javax.swing.JButton backBtn;
+    private javax.swing.JButton backbtn;
     private javax.swing.JLabel cauHoi;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

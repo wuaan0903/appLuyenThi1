@@ -11,7 +11,7 @@ import Login.HomeLogin;
  * @author admin
  */
 public class run {
-    
+
     public void Run() {
         HomeLogin hl = new HomeLogin();
         hl.setVisible(true);
@@ -22,4 +22,3 @@ public class run {
         runner.Run();
     }
 }
-

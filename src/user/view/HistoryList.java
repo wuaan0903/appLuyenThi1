@@ -4,6 +4,7 @@
  */
 package user.view;
 
+import admin.model.Config;
 import admin.model.employee;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,7 +37,7 @@ public class HistoryList extends javax.swing.JFrame {
         initComponents();
         idU.setText("" + id);
         nameU.setText("" + nameUser);
-        dataList = DataUserFunction.getUserList();
+        dataList = DataUserFunction.getUserList(null);
         TableUpdater.updateTable(historytable);
 
         if (isValidUserId(id)) {
@@ -59,18 +60,14 @@ public class HistoryList extends javax.swing.JFrame {
 
         private static Connection connection;
 
-        public static Connection getConnection() {
-            if (connection == null) {
-                try {
-                    // Thay đổi thông tin kết nối theo CSDL của bạn
-                    String url = "jdbc:mysql://localhost:3306/tracnghiem";
-                    String username = "root";
-                    String password = "";
+        public static java.sql.Connection getConnection() {
+            try {
+                if (connection == null || connection.isClosed()) {
 
-                    connection = DriverManager.getConnection(url, username, password);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    connection = DriverManager.getConnection(Config.DB_URL, Config.USERNAME, Config.PASSWORD);
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
             return connection;
         }
@@ -86,26 +83,28 @@ public class HistoryList extends javax.swing.JFrame {
 
             try {
                 String sql = "SELECT * FROM history_test";
-                PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                ResultSet resultSet = preparedStatement.executeQuery();
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet resultSet = preparedStatement.executeQuery()) {
 
-                while (resultSet.next()) {
+                    int stt = 1; // Bộ đếm số hàng
 
-                    Object[] rowData = {
-                        resultSet.getString("nameExam"),
-                        resultSet.getInt("ID_exam"),
-                        resultSet.getInt("total"),
-                        resultSet.getString("time_completed")
-                    };
-                    model.addRow(rowData);
+                    while (resultSet.next()) {
+                        Object[] rowData = {
+                            stt++,
+                            
+                            resultSet.getString("nameExam"),
+                            resultSet.getInt("ID_exam"),
+                            resultSet.getString("total"),
+                            resultSet.getString("kq"),
+                            resultSet.getString("time_completed"),
+                            resultSet.getString("date_time")
+                        };
+                        model.addRow(rowData);
+                    }
                 }
-                preparedStatement.close();
-
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     private void displayData(String userId) {
@@ -121,12 +120,17 @@ public class HistoryList extends javax.swing.JFrame {
                 preparedStatement.setString(1, userId);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    int stt = 1; // Biến đếm STT
                     while (resultSet.next()) {
                         Object[] rowData = {
+                            stt++, // Thêm STT vào hàng đầu tiên
+
                             resultSet.getString("nameExam"),
                             resultSet.getInt("ID_exam"),
-                            resultSet.getInt("total"),
-                            resultSet.getString("time_completed")
+                            resultSet.getString("total"),
+                            resultSet.getString("kq"),
+                            resultSet.getString("time_completed"),
+                            resultSet.getString("date_time")
                         };
                         model.addRow(rowData);
                     }
@@ -159,18 +163,31 @@ public class HistoryList extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        historytable.setAutoCreateRowSorter(true);
         historytable.setBackground(new java.awt.Color(204, 255, 204));
+        historytable.setForeground(new java.awt.Color(0, 0, 0));
         historytable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đề", "Mã đề", "Điểm số", "Thời gian"
+                "STT", "Tên đề", "Mã đề", "Điểm số", "Kết quả", "Thời gian làm bài", "Ngày làm"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, true, true, true, true, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        historytable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        historytable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPane1.setViewportView(historytable);
 
         jPanel2.setBackground(new java.awt.Color(204, 255, 255));
@@ -273,7 +290,7 @@ public class HistoryList extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 909, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 909, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -281,8 +298,8 @@ public class HistoryList extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -301,11 +318,12 @@ public class HistoryList extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        HomeForm hf = new HomeForm(idU.getText(),nameU.getText());
+        HomeForm hf = new HomeForm(idU.getText(), nameU.getText());
         hf.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -340,7 +358,7 @@ public class HistoryList extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new HistoryList().setVisible(true);
+               
             }
         });
     }

@@ -28,12 +28,12 @@ public class listExam extends javax.swing.JFrame {
      * Creates new form listExam
      */
     List<exam> dataList;
+
     public listExam() {
         initComponents();
         NameExam.setText("Danh sách đề thi môn ");
-        
+
         jPanel1.setLayout(new FlowLayout());
-        
 
         // Sử dụng vòng lặp để thêm 5 nút vào panel
         for (int i = 1; i <= 5; i++) {
@@ -44,13 +44,13 @@ public class listExam extends javax.swing.JFrame {
             jPanel1.add(button);
         }
     }
+
     public listExam(String s, String id, String nameUser) {
         initComponents();
         NameExam.setText("Danh sách đề thi môn " + s);
         idd.setText(id);
         nameU.setText(nameUser);
-        dataList = ExamModify.getExamList(s,0);
-
+        dataList = ExamModify.getExamList(s, 0);
 
 //        System.out.println(ex.getNameExam());
         jPanel1.setLayout(new FlowLayout());
@@ -63,14 +63,14 @@ public class listExam extends javax.swing.JFrame {
             int numberEX = ex.getNumberExam();
             String nameEX = ex.getNameExam();
             JButton button = new JButton("Đề " + numberEX);
-            System.out.println((int) ex.getNumberExam());
 
-            System.out.println((int) ex.getThoigian());
             button.setPreferredSize(new Dimension(100, 50));
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     viewTest viewTest = new viewTest(ex, idd.getText(), nameU.getText());
                     viewTest.setVisible(true);
+                    dispose();
+
                 }
             });
             jPanel1.add(button);
@@ -200,7 +200,7 @@ public class listExam extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        HomeForm hf = new HomeForm(idd.getText(),nameU.getText());
+        HomeForm hf = new HomeForm(idd.getText(), nameU.getText());
         hf.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
