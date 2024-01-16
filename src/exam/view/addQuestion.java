@@ -24,58 +24,53 @@ public class addQuestion extends javax.swing.JFrame {
      * Creates new form addQuestion
      */
     List<Question> dataList = new ArrayList<>();
-    int pos=0;
+    int pos = 0;
     String nameExam1;
     int numberExam1;
     int soCau;
-    public addQuestion()
-    {
+
+    public addQuestion() {
         initComponents();
         nameExam1 = "TEST";
-        numberExam1=2;
+        numberExam1 = 2;
         soCau = 3;
-        for(int i=0;i<soCau;i++)
-        {
-            
+        for (int i = 0; i < soCau; i++) {
+
             Question q = new Question();
             q.setStatus(0);
             dataList.add(q);
         }
         View();
-        
-        
-    }
-    public addQuestion(String s,int a,int b) {
-        initComponents();
-        nameExam.setText("Môn học : "+ s);
-        numberExam.setText("ĐỀ THI SỐ " +a);
-        nameExam1 = s;
-        numberExam1=a;
-        soCau = b;
-        cauHoi.setText("Câu Hỏi " +(pos+1));
-        for(int i=0;i<b;i++)
-        {
-            Question q = new Question();
-            q.setStatus(0);
-            dataList.add(q);
-        }
-        View();
-        
 
     }
-    
-    public void View(){
-        cauHoi.setText("Câu Hỏi "+(pos+1));
-        if(dataList.get(pos).getStatus()==0)
-        {
-         this.question.setText("");
-         this.answerA.setText("");
-         this.answerB.setText("");
-         this.answerC.setText("");
-         this.answerD.setText("");
-         this.answerCorrect.setSelectedItem("");
+
+    public addQuestion(String s, int a, int b) {
+        initComponents();
+        nameExam.setText("Môn học: " + s);
+        numberExam.setText("Đề số: " + a);
+        nameExam1 = s;
+        numberExam1 = a;
+        soCau = b;
+        cauHoi.setText("Câu Hỏi " + (pos + 1));
+        for (int i = 0; i < b; i++) {
+            Question q = new Question();
+            q.setStatus(0);
+            dataList.add(q);
         }
-        else{
+        View();
+
+    }
+
+    public void View() {
+        cauHoi.setText("Câu Hỏi " + (pos + 1));
+        if (dataList.get(pos).getStatus() == 0) {
+            this.question.setText("");
+            this.answerA.setText("");
+            this.answerB.setText("");
+            this.answerC.setText("");
+            this.answerD.setText("");
+            this.answerCorrect.setSelectedItem("");
+        } else {
             this.question.setText(dataList.get(pos).getQuestion());
             this.answerA.setText(dataList.get(pos).getAnswerA());
             this.answerB.setText(dataList.get(pos).getAnswerB());
@@ -83,16 +78,13 @@ public class addQuestion extends javax.swing.JFrame {
             this.answerD.setText(dataList.get(pos).getAnswerD());
             this.answerCorrect.setSelectedItem(String.valueOf(dataList.get(pos).getAnswer()));
         }
-        
-        if(pos ==soCau-1)
-        {
+
+        if (pos == soCau - 1) {
             saveBtn.setVisible(true);
+        } else {
+            saveBtn.setVisible(false);
         }
-        else{
-              saveBtn.setVisible(false);
-                }
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -142,6 +134,12 @@ public class addQuestion extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
         jLabel5.setText("Đáp án B :");
+
+        answerD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                answerDActionPerformed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
         jLabel6.setText("Đáp án D :");
@@ -258,44 +256,83 @@ public class addQuestion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+
+        if (pos > 0) {
+            if (!question.getText().isEmpty()
+                    && !answerA.getText().isEmpty()
+                    && !answerB.getText().isEmpty()
+                    && !answerC.getText().isEmpty()
+                    && !answerD.getText().isEmpty()
+                    && answerCorrect.getSelectedItem() != null
+                    && !answerCorrect.getSelectedItem().toString().isEmpty()) {
+
+                String selectedAnswer = answerCorrect.getSelectedItem().toString();
+
+                int answerValue = 0;
+
+                switch (selectedAnswer) {
+                    case "A":
+                        answerValue = 1;
+                        break;
+                    case "B":
+                        answerValue = 2;
+                        break;
+                    case "C":
+                        answerValue = 3;
+                        break;
+                    case "D":
+                        answerValue = 4;
+                        break;
+                    default:
+                        // Xử lý trường hợp không hợp lệ
+                        JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
+                        return;
+                }
+
+                Question q = new Question(
+                        nameExam1,
+                        numberExam1,
+                        question.getText(),
+                        answerA.getText(),
+                        answerB.getText(),
+                        answerC.getText(),
+                        answerD.getText(),
+                        answerValue,
+                        1
+                );
+
+                dataList.set(pos, q);
+            }
+
+            pos--;
+            View();
+        }
+
+
+    }//GEN-LAST:event_backBtnActionPerformed
+
+    private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBtnActionPerformed
         // TODO add your handling code here:
-       
+
 //        if(dataList.get(pos).getStatus()==0)
 //        {
+//            
 //         this.question.setText("");
 //         this.answerA.setText("");
 //         this.answerB.setText("");
 //         this.answerC.setText("");
 //         this.answerD.setText("");
 //         this.answerCorrect.setText("");
-//         
-//         if(!this.question.getText().isEmpty() && !this.answerA.getText().isEmpty() && !this.answerB.getText().isEmpty() && !this.answerC.getText().isEmpty() && !this.answerD.getText().isEmpty() && !this.answerCorrect.getText().isEmpty())
-//        {
-//            Question q = new Question(
-//                nameExam1,
-//                numberExam1,
-//         this.question.getText(),
-//         this.answerA.getText(),
-//         this.answerB.getText(),
-//         this.answerC.getText(),
-//         this.answerD.getText(),
-//         Integer.parseInt(this.answerCorrect.getSelectedItem().toString())
+        if (!this.question.getText().isEmpty()
+                && !this.answerA.getText().isEmpty()
+                && !this.answerB.getText().isEmpty()
+                && !this.answerC.getText().isEmpty()
+                && !this.answerD.getText().isEmpty()
+                && this.answerCorrect.getSelectedItem() != null
+                && !this.answerCorrect.getSelectedItem().toString().isEmpty()) {
 
-//                1
-//        );
-//            dataList.add(q);
-         if (pos - 1 >= 0) {
-        if (!question.getText().isEmpty() &&
-            !answerA.getText().isEmpty() &&
-            !answerB.getText().isEmpty() &&
-            !answerC.getText().isEmpty() &&
-            !answerD.getText().isEmpty() &&
-            answerCorrect.getSelectedItem() != null &&
-            !answerCorrect.getSelectedItem().toString().isEmpty()) {
-
-            String selectedAnswer = answerCorrect.getSelectedItem().toString();
-
-            int answerValue = 0;
+            String selectedAnswer = this.answerCorrect.getSelectedItem().toString();
+            int answerValue;
 
             switch (selectedAnswer) {
                 case "A":
@@ -311,114 +348,38 @@ public class addQuestion extends javax.swing.JFrame {
                     answerValue = 4;
                     break;
                 default:
-                    // Xử lý trường hợp không hợp lệ
-                    JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
-                    return;
+                    answerValue = 0; // Giá trị mặc định nếu không phải A, B, C, D
+                    break;
             }
 
-            Question q = new Question(
-                nameExam1,
-                numberExam1,
-                question.getText(),
-                answerA.getText(),
-                answerB.getText(),
-                answerC.getText(),
-                answerD.getText(),
-                answerValue,
-                1
-            );
+            if (answerValue != 0) { // Nếu giá trị hợp lệ
+                Question q = new Question(
+                        nameExam1,
+                        numberExam1,
+                        this.question.getText(),
+                        this.answerA.getText(),
+                        this.answerB.getText(),
+                        this.answerC.getText(),
+                        this.answerD.getText(),
+                        answerValue,
+                        1
+                );
 
-            dataList.set(pos, q);
-        }
+                dataList.set(pos, q);
 
-        pos--;
-        View();
-    }
-            
-//        }
-//        }
-//        else{
-//         this.question.setText(dataList.get(pos).getQuestion());
-//         this.answerA.setText(dataList.get(pos).getAnswerA());
-//         this.answerB.setText(dataList.get(pos).getAnswerB());
-//         this.answerC.setText(dataList.get(pos).getAnswerC());
-//         this.answerD.setText(dataList.get(pos).getAnswerD());
-//         this.answerCorrect.setText(String.valueOf(dataList.get(pos).getAnswer()));
-//        }
-    }//GEN-LAST:event_backBtnActionPerformed
-
-    private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBtnActionPerformed
-        // TODO add your handling code here:
-        
-//        if(dataList.get(pos).getStatus()==0)
-//        {
-//            
-//         this.question.setText("");
-//         this.answerA.setText("");
-//         this.answerB.setText("");
-//         this.answerC.setText("");
-//         this.answerD.setText("");
-//         this.answerCorrect.setText("");
-
-            if (!this.question.getText().isEmpty() &&
-        !this.answerA.getText().isEmpty() &&
-        !this.answerB.getText().isEmpty() &&
-        !this.answerC.getText().isEmpty() &&
-        !this.answerD.getText().isEmpty() &&
-        this.answerCorrect.getSelectedItem() != null &&
-        !this.answerCorrect.getSelectedItem().toString().isEmpty()) {
-
-        String selectedAnswer = this.answerCorrect.getSelectedItem().toString();
-        int answerValue;
-
-        switch (selectedAnswer) {
-            case "A":
-                answerValue = 1;
-                break;
-            case "B":
-                answerValue = 2;
-                break;
-            case "C":
-                answerValue = 3;
-                break;
-            case "D":
-                answerValue = 4;
-                break;
-            default:
-                answerValue = 0; // Giá trị mặc định nếu không phải A, B, C, D
-                break;
-        }
-
-        if (answerValue != 0) { // Nếu giá trị hợp lệ
-            Question q = new Question(
-                nameExam1,
-                numberExam1,
-                this.question.getText(),
-                this.answerA.getText(),
-                this.answerB.getText(),
-                this.answerC.getText(),
-                this.answerD.getText(),
-                answerValue,
-                1
-            );
-
-            dataList.set(pos, q);
-
-            if (pos + 1 < soCau) {
-                pos++;
-                View();
+                if (pos + 1 < soCau) {
+                    pos++;
+                    View();
+                } else {
+                    JOptionPane.showMessageDialog(rootPane, "Không thể chuyển sang câu hỏi tiếp theo. Hãy lưu câu hỏi nếu bạn đã nhập đủ câu hỏi.");
+                }
             } else {
-                JOptionPane.showMessageDialog(rootPane, "Không thể chuyển sang câu hỏi tiếp theo. Hãy lưu câu hỏi nếu bạn đã nhập đủ câu hỏi.");
+                JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
             }
         } else {
-            JOptionPane.showMessageDialog(rootPane, "Giá trị đúng không hợp lệ.");
+            JOptionPane.showMessageDialog(rootPane, "Không được để trống các ô trên !");
         }
-    } else {
-        JOptionPane.showMessageDialog(rootPane, "Không được để trống các ô trên !");
-    }
 
-         
-         
 //        }
 //        else{
 //            this.question.setText(dataList.get(pos).getQuestion());
@@ -428,16 +389,13 @@ public class addQuestion extends javax.swing.JFrame {
 //            this.answerD.setText(dataList.get(pos).getAnswerD());
 //            this.answerCorrect.setText(String.valueOf(dataList.get(pos).getAnswer()));
 //        }
-        
-        
+
     }//GEN-LAST:event_nextBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
         // TODO add your handling code here:
-        
 
-        for(Question x:dataList)
-        {
+        for (Question x : dataList) {
             ExamModify.insertQuestion(x);
         }
         JOptionPane.showMessageDialog(rootPane, "Thêm câu hỏi vào đề thành công !");
@@ -448,6 +406,10 @@ public class addQuestion extends javax.swing.JFrame {
         ef.setVisible(true);
 
     }//GEN-LAST:event_saveBtnActionPerformed
+
+    private void answerDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_answerDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -474,6 +436,10 @@ public class addQuestion extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(addQuestion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

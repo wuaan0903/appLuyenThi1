@@ -17,7 +17,9 @@ import javax.swing.JOptionPane;
  * @author admin
  */
 public class LoginAdmin extends javax.swing.JFrame {
+
     List<employee> listE;
+
     /**
      * Creates new form LoginAdmin
      */
@@ -27,7 +29,6 @@ public class LoginAdmin extends javax.swing.JFrame {
         readList();
     }
 
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -47,6 +48,7 @@ public class LoginAdmin extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Montserrat Black", 0, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Login Admin");
 
         jLabel2.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
@@ -71,7 +73,7 @@ public class LoginAdmin extends javax.swing.JFrame {
         exitBtn.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
         exitBtn.setForeground(new java.awt.Color(0, 0, 0));
         exitBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/left-arrow-circle-solid-24.png"))); // NOI18N
-        exitBtn.setText("Exit");
+        exitBtn.setText("Thoát");
         exitBtn.setBorder(null);
         exitBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -206,7 +208,7 @@ public class LoginAdmin extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void readList() {
         DataAdminFunction af = new DataAdminFunction();
         listE = af.getAdminList();

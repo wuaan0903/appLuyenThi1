@@ -132,15 +132,16 @@ public class InforUser extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(184, 184, 184)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(159, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(nameTk, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 235, Short.MAX_VALUE)
+                        .addComponent(nameTk, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(16, 16, 16))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -159,34 +160,34 @@ public class InforUser extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(204, 255, 204));
 
         jLabel6.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel6.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel6.setText("Họ tên sinh viên: ");
+        jLabel6.setText("Họ tên sinh viên : ");
 
         jLabel2.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel2.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Ngày sinh:");
+        jLabel2.setText("Ngày sinh            :");
 
         jLabel3.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel3.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Địa chỉ: ");
+        jLabel3.setText("Địa chỉ                 : ");
 
         jLabel4.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel4.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel4.setText("Số điện thoại:");
+        jLabel4.setText("Số điện thoại      :");
 
         jLabel5.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel5.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel5.setText("Giới tính:");
+        jLabel5.setText("Giới tính               :");
 
         jLabel7.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel7.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel7.setText("Mã sinh viên:");
+        jLabel7.setText("Mã sinh viên       :");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -194,13 +195,13 @@ public class InforUser extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel7))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -224,32 +225,32 @@ public class InforUser extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(204, 255, 204));
 
         nameIf.setBackground(new java.awt.Color(153, 153, 153));
-        nameIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        nameIf.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         nameIf.setForeground(new java.awt.Color(0, 0, 0));
         nameIf.setText("Phan Văn Tươi");
 
         dobIf.setBackground(new java.awt.Color(153, 153, 153));
-        dobIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        dobIf.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         dobIf.setForeground(new java.awt.Color(0, 0, 0));
         dobIf.setText("24/7/2003");
 
         phonenumber.setBackground(new java.awt.Color(153, 153, 153));
-        phonenumber.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        phonenumber.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         phonenumber.setForeground(new java.awt.Color(0, 0, 0));
         phonenumber.setText("0394475956");
 
         genderIf.setBackground(new java.awt.Color(153, 153, 153));
-        genderIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        genderIf.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         genderIf.setForeground(new java.awt.Color(0, 0, 0));
         genderIf.setText("Nam");
 
         addressIf.setBackground(new java.awt.Color(153, 153, 153));
-        addressIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        addressIf.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         addressIf.setForeground(new java.awt.Color(0, 0, 0));
         addressIf.setText("Thanh Hóa");
 
         idIf.setBackground(new java.awt.Color(153, 153, 153));
-        idIf.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        idIf.setFont(new java.awt.Font("Montserrat", 1, 14)); // NOI18N
         idIf.setForeground(new java.awt.Color(0, 0, 0));
         idIf.setText("241");
 

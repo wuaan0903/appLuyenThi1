@@ -27,24 +27,24 @@ public class UserForm extends javax.swing.JFrame {
     DefaultTableModel tableModel;
     List<employee> dataList;
     int currentPos = -1;
+
     public UserForm() {
         initComponents();
-        tableModel = (DefaultTableModel) userTable.getModel(); 
+        tableModel = (DefaultTableModel) userTable.getModel();
         dataList = DataUserFunction.getUserList(null);
 
         showData();
-        
+
         userTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 currentPos = userTable.getSelectedRow();
-                
+
                 FullName.setText(dataList.get(currentPos).getName());
                 Dob.setText(dataList.get(currentPos).getDob());
                 Address.setText(dataList.get(currentPos).getAddress());
                 PhoneNumber.setText(dataList.get(currentPos).getPhone());
                 Gender.setText(dataList.get(currentPos).getGender());
-
 
             }
 
@@ -81,7 +81,6 @@ public class UserForm extends javax.swing.JFrame {
             });
         }
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -108,11 +107,11 @@ public class UserForm extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         PhoneNumber = new javax.swing.JTextField();
         Gender = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         updateBtn = new javax.swing.JButton();
         findBtn = new javax.swing.JButton();
         deleteBtn = new javax.swing.JButton();
+        backBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -157,13 +156,6 @@ public class UserForm extends javax.swing.JFrame {
         jLabel7.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Giới tính :");
-
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/left-arrow-circle-solid-24.png"))); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -212,6 +204,16 @@ public class UserForm extends javax.swing.JFrame {
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
+        backBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        backBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/left-arrow-circle-solid-24.png"))); // NOI18N
+        backBtn.setText("Trở lại");
+        backBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        backBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -220,9 +222,10 @@ public class UserForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(76, 76, 76)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -253,20 +256,17 @@ public class UserForm extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 249, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(7, 7, 7)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1)
+                    .addComponent(backBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -292,7 +292,7 @@ public class UserForm extends javax.swing.JFrame {
                             .addComponent(jLabel5)
                             .addComponent(Address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -310,18 +310,11 @@ public class UserForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        HomeForm hf = new HomeForm();
-        hf.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jButton4ActionPerformed
-
     private void findBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findBtnActionPerformed
         // TODO add your handling code here:
         String s = JOptionPane.showInputDialog("Nhap ten khach hang can tim kiem");
-        if(!s.isEmpty()) {
-            s = "%"+s+"%";
+        if (!s.isEmpty()) {
+            s = "%" + s + "%";
         }
         dataList = DataUserFunction.getUserList(s);
         showData();
@@ -329,12 +322,12 @@ public class UserForm extends javax.swing.JFrame {
 
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
         // TODO add your handling code here:
-        if(currentPos == -1) {
+        if (currentPos == -1) {
             JOptionPane.showMessageDialog(rootPane, "Chua chon khach hang can xoa, vui long kiem tra lai");
             return;
         }
         int option = JOptionPane.showConfirmDialog(rootPane, "Ban chac chan muon xoa khac hang nay khong?");
-        if(option == 0) {
+        if (option == 0) {
             DataUserFunction.deleteUser(dataList.get(currentPos).getId());
 
             dataList.remove(currentPos);
@@ -378,6 +371,12 @@ public class UserForm extends javax.swing.JFrame {
         PhoneNumber.setText("");
         Gender.setText("");
     }//GEN-LAST:event_updateBtnActionPerformed
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        HomeForm hf = new HomeForm();
+        hf.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_backBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -423,9 +422,9 @@ public class UserForm extends javax.swing.JFrame {
     private javax.swing.JTextField FullName;
     private javax.swing.JTextField Gender;
     private javax.swing.JTextField PhoneNumber;
+    private javax.swing.JButton backBtn;
     private javax.swing.JButton deleteBtn;
     private javax.swing.JButton findBtn;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

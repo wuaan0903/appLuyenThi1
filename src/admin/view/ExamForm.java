@@ -4,19 +4,32 @@
  */
 package admin.view;
 
+import admin.model.Config;
 import exam.view.editQuestion;
 import exam.controller.ExamModify;
 import exam.model.Question;
 import exam.model.exam;
+import exam.view.addOption;
 import exam.view.addQuestion;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import static java.lang.Integer.parseInt;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-
 
 /**
  *
@@ -29,6 +42,7 @@ public class ExamForm extends javax.swing.JFrame {
      */
     DefaultTableModel tableModel;
     List<exam> dataList;
+    String filePath;
     int currentPos = -1;
 
     public ExamForm() {
@@ -110,7 +124,64 @@ public class ExamForm extends javax.swing.JFrame {
         }
     }
 
+    private void importExcel() throws FileNotFoundException, IOException {
+        try {
+//            String selectedNameExam = (String) nameExam.getSelectedItem();
+//            int selectedNumberExam = Integer.parseInt(numberExam.getText());
 
+            Connection connection = DriverManager.getConnection(Config.DB_URL, Config.USERNAME, Config.PASSWORD);
+            String sql = "INSERT INTO cauhoi(NameExam, numberExam, question, answerA, answerB, answerC, answerD, answer_correct, status) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                    + "ON DUPLICATE KEY UPDATE "
+                    + "NameExam = VALUES(NameExam), "
+                    + "numberExam = VALUES(numberExam), "
+                    + "question = VALUES(question), "
+                    + "answerA = VALUES(answerA), "
+                    + "answerB = VALUES(answerB), "
+                    + "answerC = VALUES(answerC), "
+                    + "answerD = VALUES(answerD), "
+                    + "answer_correct = VALUES(answer_correct), "
+                    + "status = VALUES(status)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            BufferedReader lineReader = new BufferedReader(new FileReader(filePath));
+            String lineText = null;
+            int count = 0;
+            lineReader.readLine();
+            while ((lineText = lineReader.readLine()) != null) {
+                String[] data = lineText.split(";");
+
+                String NameExam = (String) nameExam.getSelectedItem(); // Sửa giá trị NameExam
+                int NumberExam = Integer.parseInt(numberExam.getText());
+                String question = data[0];
+                String answerA = data[1];
+                String answerB = data[2];
+                String answerC = data[3];
+                String answerD = data[4];
+                String answer_correct = data[5];
+                String status = data[6];
+
+                statement.setString(1, NameExam); // Thêm giá trị cho NameExam trong phần ON DUPLICATE KEY UPDATE
+                statement.setInt(2, NumberExam);
+                statement.setString(3, question);
+                statement.setString(4, answerA);
+                statement.setString(5, answerB);
+                statement.setString(6, answerC);
+                statement.setString(7, answerD);
+                statement.setInt(8, parseInt(answer_correct));
+                statement.setInt(9, parseInt(status));
+                statement.addBatch();
+                if (count % batchSize() == 0) {
+                    statement.executeBatch();
+                }
+            }
+            lineReader.close();
+            statement.executeBatch();
+            connection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -139,6 +210,7 @@ public class ExamForm extends javax.swing.JFrame {
         thoiGian = new javax.swing.JComboBox<>();
         soCau = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -192,6 +264,7 @@ public class ExamForm extends javax.swing.JFrame {
         jLabel5.setText("Thời gian :");
 
         saveBtn.setBackground(new java.awt.Color(204, 255, 255));
+        saveBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
         saveBtn.setForeground(new java.awt.Color(0, 0, 0));
         saveBtn.setText("Thêm");
         saveBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -201,6 +274,7 @@ public class ExamForm extends javax.swing.JFrame {
         });
 
         deleteexam.setBackground(new java.awt.Color(204, 255, 255));
+        deleteexam.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
         deleteexam.setForeground(new java.awt.Color(0, 0, 0));
         deleteexam.setText("Xóa");
         deleteexam.addActionListener(new java.awt.event.ActionListener() {
@@ -210,6 +284,7 @@ public class ExamForm extends javax.swing.JFrame {
         });
 
         searchBtn.setBackground(new java.awt.Color(204, 255, 255));
+        searchBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
         searchBtn.setForeground(new java.awt.Color(0, 0, 0));
         searchBtn.setText("Tìm kiếm");
         searchBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -218,9 +293,11 @@ public class ExamForm extends javax.swing.JFrame {
             }
         });
 
+        backBtn.setBackground(new java.awt.Color(204, 255, 204));
         backBtn.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        backBtn.setForeground(new java.awt.Color(0, 0, 0));
         backBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/left-arrow-circle-solid-24.png"))); // NOI18N
-        backBtn.setText("Back");
+        backBtn.setText("Quay lại");
         backBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         backBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -260,19 +337,13 @@ public class ExamForm extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("phút");
 
+        jLabel8.setForeground(new java.awt.Color(204, 255, 255));
+        jLabel8.setText("jLabel8");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(backBtn)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
             .addComponent(jScrollPane1)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(127, 127, 127)
@@ -296,42 +367,58 @@ public class ExamForm extends javax.swing.JFrame {
                             .addComponent(numberExam)
                             .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(46, 46, 46)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(saveBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deleteexam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(137, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(deleteexam, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(saveBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
+                .addContainerGap(155, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(backBtn)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(backBtn)
+                    .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(saveBtn)
-                    .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(deleteexam)
-                    .addComponent(jLabel6)
-                    .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nameExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(saveBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchBtn)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4)
-                        .addComponent(soCau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5)
-                        .addComponent(thoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel7)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(numberExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(soCau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(thoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(deleteexam)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchBtn)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -365,7 +452,7 @@ public class ExamForm extends javax.swing.JFrame {
 // Kiểm tra xem đã có bài kiểm tra với số bài kiểm tra giống nhau trong dataList chưa
         for (exam existingExam : dataList) {
             if (existingExam.getNameExam().equals(selectedName) && existingExam.getNumberExam() == number) {
-                JOptionPane.showMessageDialog(this, "Đề thi với số bài kiểm tra đã tồn tại trong " + selectedName + ".", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Đề thi với mã đề đã tồn tại trong " + selectedName + ".", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return; // Dừng lại nếu đã có bài kiểm tra với số bài kiểm tra giống nhau trong cùng một nameExam
             }
         }
@@ -387,9 +474,8 @@ public class ExamForm extends javax.swing.JFrame {
 
         JOptionPane.showMessageDialog(this, "Đã thêm đề thi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
-// Mở cửa sổ addQuestion
-        addQuestion aq = new addQuestion(selectedName, number, soCau);
-        aq.setVisible(true);
+        addOption aO = new addOption(selectedName, number, soCau);
+        aO.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_saveBtnActionPerformed
 
@@ -477,6 +563,10 @@ public class ExamForm extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -497,6 +587,7 @@ public class ExamForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<String> nameExam;
@@ -506,4 +597,8 @@ public class ExamForm extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> soCau;
     private javax.swing.JComboBox<String> thoiGian;
     // End of variables declaration//GEN-END:variables
+
+    private int batchSize() {
+        return 20;
+    }
 }

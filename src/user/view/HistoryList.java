@@ -32,7 +32,6 @@ public class HistoryList extends javax.swing.JFrame {
         initComponents();
 
     }
-
     public HistoryList(String id, String nameUser) {
         initComponents();
         idU.setText("" + id);
@@ -72,9 +71,7 @@ public class HistoryList extends javax.swing.JFrame {
             return connection;
         }
     }
-
     public class TableUpdater {
-
         public static void updateTable(JTable historytable) {
             DefaultTableModel model = (DefaultTableModel) historytable.getModel();
             model.setRowCount(0); // Xóa dữ liệu hiện tại trong bảng
@@ -106,19 +103,15 @@ public class HistoryList extends javax.swing.JFrame {
             }
         }
     }
-
     private void displayData(String userId) {
         DefaultTableModel model = (DefaultTableModel) historytable.getModel();
         model.setRowCount(0); // Xóa dữ liệu hiện tại trong bảng
-
         Connection connection = DatabaseConnection.getConnection();
-
         try {
             // Thay đổi truy vấn SQL để phản ánh yêu cầu của bạn
             String sql = "SELECT * FROM history_test WHERE user_id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, userId);
-
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     int stt = 1; // Biến đếm STT
                     while (resultSet.next()) {
@@ -210,7 +203,7 @@ public class HistoryList extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Mã sinh viên:");
+        jLabel2.setText("MSV:");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -219,12 +212,11 @@ public class HistoryList extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nameU, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(nameU, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(idU, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 11, Short.MAX_VALUE)))
+                        .addComponent(idU, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
